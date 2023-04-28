@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "title": "Strategy & Research",
+    "icon": "pe-7s-gleam",
+    "content": "We create a strategy for developing and designing to find out how the users interact with websites, what their needs are and what can be done to solve their problems."
+  },
+  {
+    "id": 2,
+    "title": "Web Development",
+    "icon": "pe-7s-phone",
+    "content": "To convert designs in a format where humans can see and interact with design elements remotely."
+  },
+  {
+    "id": 3,
+    "title": "App Development",
+    "icon": "pe-7s-magic-wand",
+    "content": "We are expert in developing excellent mobile app development solutions. Mobile app will greatly impact your digital operations - it will change your entire business."
+  },
+  {
+    "id": 1,
+    "title": "Company Branding",
+    "icon": "pe-7s-gleam",
+    "content": "Creating a great looking logo is a matter of thorough research into the philosophy and offerings of a business. Our team of experts make it possible for you to create logos that communicate your brand message to your audience."
+  },
+  {
+    "id": 2,
+    "title": "SEO & Marketing ",
+    "icon": "pe-7s-phone",
+    "content": "Our team of SEO professionals are always abreast with the trends and updates being released by search engines. This ensures that your brand ranks within the first page of the search engine faster without any wrong doing to guarantee the success lasts for long."
+  },
+  {
+    "id": 3,
+    "title": "Customer Experience",
+    "icon": "pe-7s-magic-wand",
+    "content": "Providing an unrivalled customer experience (CX) is the most important aspect of any business worldwide. In today’s highly competitive environment, it is imperative to make each and every interaction with customers meaningful and it is crucial to engage with them at every part of their purchasing journey"
+  }
+]

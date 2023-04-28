@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "title": "art & illustration",
+    "secTex": "Innovation and Crafts",
+    "image": "/img/portfolio/metro/socialIcons.jpg",
+    "slug": "/project-details2/project-details2-dark"
+  },
+  {
+    "id": 2,
+    "title": "Digital Marketing",
+    "secTex": "Inspiring new space",
+    "image": "/img/portfolio/metro/digitalwork2.jpg",
+    "slug": "/project-details2/project-details2-dark"
+  },
+  {
+    "id": 3,
+    "title": "App development",
+    "secTex": "Natural plus modern",
+    "image": "/img/portfolio/metro/design6.png",
+    "slug": "/project-details2/project-details2-dark"
+  },
+  {
+    "id": 4,
+    "title": "3d web application",
+    "secTex": "New technologies",
+    "image": "/img/portfolio/metro/design1.png",
+    "slug": "/project-details2/project-details2-dark"
+  }
+]
