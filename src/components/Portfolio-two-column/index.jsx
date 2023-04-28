@@ -19,7 +19,7 @@ const PortfolioTwoColumn = ({ portfolioItems }) => {
         <div className="gallery full-width">
 
           {portfolioItems.map(item => (
-            <div className="col-md-6 items web">
+            <div className="col-md-6 items web" key={item._id}>
               <div className="item-img wow fadeInUp" data-wow-delay=".4s">
 
                 <a>
