@@ -4,17 +4,17 @@ import { Formik, Form, Field } from "formik";
 import appData from "../../data/app.json";
 import Image from "next/image";
 
-const Footer = ({ noSubBG }) => {
-  function validateEmail(value) {
+const Footer = ( { noSubBG } ) => {
+  function validateEmail( value ) {
     let error;
-    if (!value) {
+    if ( !value ) {
       error = "Required";
-    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
+    } else if ( !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test( value ) ) {
       error = "Invalid email address";
     }
     return error;
   }
-  const sendEmail = (ms) => new Promise((r) => setTimeout(r, ms));
+  const sendEmail = ( ms ) => new Promise( ( r ) => setTimeout( r, ms ) );
   return (
     <footer className={`footer-half ${noSubBG ? '' : 'sub-bg'} section-padding pb-0`}>
       <div className="container">
@@ -29,16 +29,15 @@ const Footer = ({ noSubBG }) => {
               <div className="con-info custom-font">
                 <ul>
                   <li>
-                    <span>Email : </span> <br/> Info@pixelssoft.com
+                    <span>Email : </span> <br /> Info@pixelssoft.com
                   </li>
                   <li>
                     <span>Address : </span>
                     <br />
-                    <strong>USA:</strong> A32 , Ave 15th Street, Door 211, San
-                    Franciso, USA 32490
+                    <strong>USA:</strong> 4370 chicago drive sw 760 granville,USA
                     <br />
                     <strong>UK:</strong> 26a Somerton Road, Newport, United Kingdom NP19 8LD
-                    <br/>
+                    <br />
                     <strong>CA:</strong> 3466 HALSTEAD RD MISSISSAUGA, ON, L5L 4G8 , Canada
                   </li>
                   <li>
@@ -70,14 +69,14 @@ const Footer = ({ noSubBG }) => {
                 initialValues={{
                   subscribe: "",
                 }}
-                onSubmit={async (values) => {
-                  await sendEmail(500);
-                  alert(JSON.stringify(values, null, 2));
+                onSubmit={async ( values ) => {
+                  await sendEmail( 500 );
+                  alert( JSON.stringify( values, null, 2 ) );
                   // Reset the values
                   values.subscribe = "";
                 }}
               >
-                {({ errors, touched }) => (
+                {( { errors, touched } ) => (
                   <Form>
                     <div className="form-group custom-font">
                       <Field

@@ -124,12 +124,23 @@ const ContactWithMap = ( { theme = "dark" } ) => {
                     Visit Us.
                   </h3>
                 </Split>
-                <div className="item">
-                  <h6>
+                <div className="con-info custom-font">
+                  {/* <div className="item"> */}
+                  <li>
+                    <span>Address : </span>
+                    <br />
+                    <strong>USA:</strong> 4370 chicago drive sw 760 granville,USA
+                    <br />
+                    <strong>UK:</strong> 26a Somerton Road, Newport, United Kingdom NP19 8LD
+                    <br />
+                    <strong>CA:</strong> 3466 HALSTEAD RD MISSISSAUGA, ON, L5L 4G8 , Canada
+                  </li>
+
+                  {/* <h6>
                     295 Witting Streets Suite 666,
                     <br />
                     Melbourne, Australia
-                  </h6>
+                  </h6> */}
                 </div>
                 <div className="social mt-50">
                   <a href="https://www.facebook.com/profile.php?id=100064333501672" rel="noopener noreferrer" target={"_blank"} className="icon">

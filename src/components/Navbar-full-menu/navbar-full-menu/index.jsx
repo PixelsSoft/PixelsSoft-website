@@ -6,15 +6,15 @@ import appData from "../../../data/app.json";
 import handleFullScreenNavbar from "../../../common/handleFullScreenNavbar";
 import Image from "next/image";
 
-const NavbarFullMenu = ({ theme, lr }) => {
-  React.useEffect(() => {
+const NavbarFullMenu = ( { theme, lr } ) => {
+  React.useEffect( () => {
     handleFullScreenNavbar();
-  }, []);
+  }, [] );
   return (
     <>
       <div
         id="navi"
-        className={`topnav ${theme ? (theme === "light" ? "light" : "") : ""}`}
+        className={`topnav ${theme ? ( theme === "light" ? "light" : "" ) : ""}`}
       >
         <div className="container-fluid">
           {/* <div className="logo"> */}
@@ -286,9 +286,15 @@ const NavbarFullMenu = ({ theme, lr }) => {
                 </div>
                 <div className="item">
                   <h6>Address :</h6>
-                  <p>
-                    541 Melville Ave, Palo Alto, CA 94301, ask@ohio.colabr.io
-                  </p>
+                  <li>
+                    <span>Address : </span>
+                    <br />
+                    <strong>USA:</strong> 4370 chicago drive sw 760 granville,USA
+                    <br />
+                    <strong>UK:</strong> 26a Somerton Road, Newport, United Kingdom NP19 8LD
+                    <br />
+                    <strong>CA:</strong> 3466 HALSTEAD RD MISSISSAUGA, ON, L5L 4G8 , Canada
+                  </li>
                 </div>
                 <div className="item">
                   <h6>Email :</h6>
