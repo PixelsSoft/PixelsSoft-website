@@ -4,10 +4,11 @@ import Script from "next/script";
 import Cursor from "../components/Cursor";
 import ScrollToTop from "../components/Scroll-to-top";
 import LoadingScreen from "../components/Loading-Screen";
-import { FloatingWhatsApp } from "react-floating-whatsapp";
+// import { FloatingWhatsApp } from "react-floating-whatsapp";
+import TawkMessengerReact from '@tawk.to/tawk-messenger-react';
 import "../styles/globals.css";
 
-function MyApp({ Component, pageProps }) {
+function MyApp( { Component, pageProps } ) {
   return (
     <>
       <Head>
@@ -37,11 +38,14 @@ function MyApp({ Component, pageProps }) {
         src="/js/isotope.pkgd.min.js"
       ></Script>
       <Script
-        strategy="lazyOnload" 
-        id="initWow" 
+        strategy="lazyOnload"
+        id="initWow"
         src="/js/initWow.js"
       ></Script>
-      <FloatingWhatsApp phoneNumber="+1 386 306 6199" accountName="Pixels Soft" avatar='/img/whatsapp-pic-2.png' allowClickAway  />
+      <TawkMessengerReact
+        propertyId="648864e494cf5d49dc5d6a94"
+        widgetId="1h2qck7tf" />
+      {/* <FloatingWhatsApp phoneNumber="+1 386 306 6199" accountName="Pixels Soft" avatar='/img/whatsapp-pic-2.png' allowClickAway  /> */}
     </>
   );
 }

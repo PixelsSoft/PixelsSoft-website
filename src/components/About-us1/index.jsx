@@ -2,6 +2,7 @@
 import React from "react";
 import Split from "../Split";
 import AboutUs1Date from "../../data/sections/about-us1.json";
+import Image from 'next/image'
 
 const AboutUs1 = () => {
   return (
@@ -13,15 +14,23 @@ const AboutUs1 = () => {
               <div className="row">
                 <div className="col-md-5 cmd-padding valign">
                   <div className="img1 wow imago" data-wow-delay=".5s">
-                    <img src={AboutUs1Date.image1} alt="" />
+                    <Image
+                      width={500}
+                      height={500}
+                      src={AboutUs1Date.image1} alt="" />
                   </div>
                 </div>
                 <div className="col-md-7 cmd-padding">
                   <div className="img2 wow imago" data-wow-delay=".3s">
-                    <img src={AboutUs1Date.image2} alt="" />
+                    <Image
+                      width={500}
+                      height={500}
+                      src={AboutUs1Date.image2} alt="" />
                   </div>
                   <div className="img3 wow imago" data-wow-delay=".8s">
-                    <img src={AboutUs1Date.image3} alt="" />
+                    <Image
+                      width={500}
+                      height={500} src={AboutUs1Date.image3} alt="" />
                   </div>
                 </div>
               </div>
@@ -50,7 +59,7 @@ const AboutUs1 = () => {
               </Split>
               <div className="ftbox mt-30">
                 <ul>
-                  {AboutUs1Date.features.map((feature) => (
+                  {AboutUs1Date.features.map( ( feature ) => (
                     <li
                       key={feature.id}
                       className={`wow fadeIn ${feature.id == 2 ? "space" : ""}`}
@@ -68,7 +77,7 @@ const AboutUs1 = () => {
                         <span></span>
                       </div>
                     </li>
-                  ))}
+                  ) )}
                 </ul>
               </div>
             </div>

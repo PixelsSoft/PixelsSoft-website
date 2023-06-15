@@ -1,24 +1,25 @@
 /* eslint-disable @next/next/no-img-element */
 import React from "react";
-import Link from "next/link";
+
 import initIsotope from "../../common/initIsotope";
 
-const PortfolioTwoColumn = ({ portfolioItems }) => {
-  const [pageLoaded, setPageLoaded] = React.useState(false);
-  React.useEffect(() => {
-    setPageLoaded(true);
-    if (pageLoaded) {
-      setTimeout(() => {
+
+const PortfolioTwoColumn = ( { portfolioItems } ) => {
+  const [pageLoaded, setPageLoaded] = React.useState( false );
+  React.useEffect( () => {
+    setPageLoaded( true );
+    if ( pageLoaded ) {
+      setTimeout( () => {
         initIsotope();
-      }, 1000)
+      }, 1000 )
     }
-  }, [pageLoaded]);
+  }, [pageLoaded] );
   return (
     <section className="portfolio section-padding pb-70">
       <div className="container">
         <div className="gallery full-width">
 
-          {portfolioItems.map(item => (
+          {portfolioItems.map( item => (
             <div className="col-md-6 items web" key={item._id}>
               <div className="item-img wow fadeInUp" data-wow-delay=".4s">
 
@@ -30,14 +31,14 @@ const PortfolioTwoColumn = ({ portfolioItems }) => {
                   <h6>{item.name}</h6>
                   <span>
                     {
-                      item.tags && item.tags.map(tag => tag).join(', ')
+                      item.tags && item.tags.map( tag => tag ).join( ', ' )
                     }
                     {/* <a >Design</a>, <a >React js</a> */}
                   </span>
                 </div>
               </div>
             </div>
-          ))}
+          ) )}
           {/* <div className="col-md-6 items graphic">
             <div className="item-img wow fadeInUp" data-wow-delay=".4s">
 

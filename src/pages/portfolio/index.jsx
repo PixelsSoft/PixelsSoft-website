@@ -6,8 +6,8 @@ import CallToAction from "../../components/Call-to-action";
 import PortfolioTwoColumn from "../../components/Portfolio-two-column";
 import client from '../../config/sanity.config'
 
-const Works4Dark = ({portfolioItems}) => {
-  console.log(portfolioItems)
+const Works4Dark = ( { portfolioItems } ) => {
+
   const fixedHeader = React.useRef( null );
   const MainContent = React.useRef( null );
   const navbarRef = React.useRef( null );
@@ -90,11 +90,11 @@ const Works4Dark = ({portfolioItems}) => {
 };
 
 export async function getStaticProps() {
-  
+
   const query = `*[_type == "portfolio"]{_id, name, tags, image{asset->{path,url}}}`
 
-  const portfolioItems = await client.fetch(query)
-  
+  const portfolioItems = await client.fetch( query )
+
   return {
     props: {
       portfolioItems

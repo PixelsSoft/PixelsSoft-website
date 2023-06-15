@@ -7,26 +7,26 @@ import { useRouter } from "next/router";
 import client from '../../../config/sanity.config'
 import DarkTheme from "../../../layouts/Dark";
 
-const Post = ({post}) => {
-  const navbarRef = React.useRef(null);
-  const logoRef = React.useRef(null);
-  React.useEffect(() => {
-    document.querySelector('body').classList.add('menubarblack');
+const Post = ( { post } ) => {
+  const navbarRef = React.useRef( null );
+  const logoRef = React.useRef( null );
+  React.useEffect( () => {
+    document.querySelector( 'body' ).classList.add( 'menubarblack' );
     var navbar = navbarRef.current,
       logo = logoRef.current;
-    if (window.pageYOffset > 300) {
-      navbar.classList.add("nav-scroll");
+    if ( window.pageYOffset > 300 ) {
+      navbar.classList.add( "nav-scroll" );
     } else {
-      navbar.classList.remove("nav-scroll");
+      navbar.classList.remove( "nav-scroll" );
     }
-    window.addEventListener("scroll", () => {
-      if (window.pageYOffset > 300) {
-        navbar.classList.add("nav-scroll");
+    window.addEventListener( "scroll", () => {
+      if ( window.pageYOffset > 300 ) {
+        navbar.classList.add( "nav-scroll" );
       } else {
-        navbar.classList.remove("nav-scroll");
+        navbar.classList.remove( "nav-scroll" );
       }
-    });
-  }, [navbarRef]);
+    } );
+  }, [navbarRef] );
   return (
     <DarkTheme>
       <Navbar nr={navbarRef} lr={logoRef} theme="themeL" />
@@ -48,16 +48,16 @@ const Post = ({post}) => {
 };
 
 
-export async function getStaticProps(context) {
-  const {params} = context
-  console.log(params)
+export async function getStaticProps( context ) {
+  const { params } = context
+
 
   const query = `*[_type == "blog" && slug.current == $slug] { _id, title, date, author -> {_id, name, about}, content, image{asset->{path,url}}, "slug":slug.current }`
-  const options = {slug: params.post}
+  const options = { slug: params.post }
 
-  const post = await client.fetch(query, options)
+  const post = await client.fetch( query, options )
 
-  console.log(post)
+
 
   return {
     props: {
@@ -69,13 +69,13 @@ export async function getStaticProps(context) {
 export async function getStaticPaths() {
   const query = `*[_type == "blog"]{'slug': slug.current}`
 
-  const posts = await client.fetch(query)
+  const posts = await client.fetch( query )
 
-  const paths = posts.map(post => ({
+  const paths = posts.map( post => ( {
     params: {
       post: post.slug
     }
-  }))
+  } ) )
   return {
     paths,
     fallback: false
