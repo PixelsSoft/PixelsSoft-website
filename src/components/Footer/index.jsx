@@ -41,7 +41,7 @@ const Footer = ( { noSubBG } ) => {
                     <strong>CA:</strong> 3466 HALSTEAD RD MISSISSAUGA, ON, L5L 4G8 , Canada
                   </li>
                   <li>
-                    <span>Phone : </span> <br />(+1) 386 306 6199, +44 7477 2275500
+                    <span>Phone : </span> <br />(+1) 406 797-7989,
                   </li>
                 </ul>
               </div>

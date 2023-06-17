@@ -5,22 +5,25 @@ import Link from "next/link";
 import initIsotope from "../../common/initIsotope";
 import portfolio1Data from "../../data/sections/portfolio1.json";
 
-const PortfolioCustomColumn = ({
+const PortfolioCustomColumn = ( {
+  portfolioItems,
   column,
   filterPosition,
   hideFilter,
   hideSectionTitle,
-}) => {
-  const [pageLoaded, setPageLoaded] = React.useState(false);
-  React.useEffect(() => {
-    setPageLoaded(true);
-    if (pageLoaded) {
-      setTimeout(() => {
+} ) => {
+  const [pageLoaded, setPageLoaded] = React.useState( false );
+  React.useEffect( () => {
+    setPageLoaded( true );
+    if ( pageLoaded ) {
+      setTimeout( () => {
         initIsotope();
-      }, 1000);
+      }, 1000 );
     }
-  }, [pageLoaded]);
+  }, [pageLoaded] );
+  console.log( "portfolioItemsportfolioItemsportfolioItems", portfolioItems )
   return (
+
     <section className="portfolio section-padding pb-70">
       {!hideSectionTitle && (
         <div className="container">
@@ -42,13 +45,12 @@ const PortfolioCustomColumn = ({
         <div className="row">
           {!hideFilter && (
             <div
-              className={`filtering ${
-                filterPosition === "center"
-                  ? "text-center"
-                  : filterPosition === "left"
+              className={`filtering ${filterPosition === "center"
+                ? "text-center"
+                : filterPosition === "left"
                   ? "text-left"
                   : "text-right"
-              } col-12`}
+                } col-12`}
             >
               <div className="filter">
                 <span data-filter="*" className="active">
@@ -62,45 +64,41 @@ const PortfolioCustomColumn = ({
           )}
 
           <div className="gallery full-width">
-            {portfolio1Data.map((item, index) => (
+            {portfolioItems.map( ( item, index ) => (
               <div
-                key={item.id}
-                className={`${
-                  column === 3
-                    ? "col-lg-4 col-md-6"
-                    : column === 2
+                key={item?.id}
+                className={`${column === 3
+                  ? "col-lg-4 col-md-6"
+                  : column === 2
                     ? "col-md-6"
                     : "col-12"
-                } items ${item.filterCategory} wow fadeInUp ${
-                  item.id === 2 && column == 3
+                  } items ${item?.filterCategory} wow fadeInUp ${item.id === 2 && column == 3
                     ? "lg-mr"
                     : item.id === 1 && column == 2
-                    ? "lg-mr"
-                    : ""
-                }`}
+                      ? "lg-mr"
+                      : ""
+                  }`}
                 data-wow-delay=".4s"
               >
                 <div className="item-img">
-                  <Link href="/project-details2/project-details2-dark">
-                    <a className="imago wow">
-                      <img src={item.image} alt="image" />
-                      <div className="item-img-overlay"></div>
-                    </a>
-                  </Link>
+                  <a className="imago wow">
+                    <img src={item.image.asset.url} alt="image" />
+                    <div className="item-img-overlay"></div>
+                  </a>
                 </div>
                 <div className="cont">
-                  <h6>{item.title}</h6>
+                  <h6>{item?.title}</h6>
                   <span>
-                    {item.tags.map((tag, index) => (
+                    {item?.tags?.map( ( tag, index ) => (
                       <React.Fragment key={index * 3}>
-                        <Link href="/works4/works4-dark">{tag}</Link>
-                        {index == item.tags.length - 1 ? "" : ","}
+                        {tag}
+                        {index == item?.tags.length - 1 ? "" : ","}
                       </React.Fragment>
-                    ))}
+                    ) )}
                   </span>
                 </div>
               </div>
-            ))}
+            ) )}
           </div>
         </div>
       </div>

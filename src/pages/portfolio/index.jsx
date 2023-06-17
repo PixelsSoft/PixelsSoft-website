@@ -4,6 +4,7 @@ import addParlx from "../../common/addParlx";
 import Navbar from "../../components/Navbar";
 import CallToAction from "../../components/Call-to-action";
 import PortfolioTwoColumn from "../../components/Portfolio-two-column";
+import PortfolioTreeColumn from "../../components/Portfolio-custom-column";
 import client from '../../config/sanity.config'
 
 const Works4Dark = ( { portfolioItems } ) => {
@@ -73,7 +74,8 @@ const Works4Dark = ( { portfolioItems } ) => {
         </div>
       </header>
       <div ref={MainContent} className="main-content">
-        <PortfolioTwoColumn portfolioItems={portfolioItems} />
+
+        <PortfolioTreeColumn column={3} portfolioItems={portfolioItems} />
         <CallToAction />
         <footer className="footer-half sub-bg">
           <div className="container">
