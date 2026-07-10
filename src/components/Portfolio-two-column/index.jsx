@@ -2,6 +2,7 @@
 import React from "react";
 
 import initIsotope from "../../common/initIsotope";
+import { getImageUrl } from "../../lib/media";
 
 
 const PortfolioTwoColumn = ( { portfolioItems } ) => {
@@ -24,7 +25,7 @@ const PortfolioTwoColumn = ( { portfolioItems } ) => {
               <div className="item-img wow fadeInUp" data-wow-delay=".4s">
 
                 <a>
-                  <img src={item.image.asset.url} alt="image" />
+                  <img src={getImageUrl(item.image)} alt={item.name || item.title || "Portfolio project"} />
                 </a>
 
                 <div className="cont">

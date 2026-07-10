@@ -2,6 +2,7 @@ import React from "react";
 import ContactHeader from "../../components/Contact-header";
 import ContactWithMap from "../../components/Contact-with-map";
 import Navbar from "../../components/Navbar";
+import SEO from "../../components/SEO";
 import DarkTheme from "../../layouts/Dark";
 
 const Contact = () => {
@@ -9,30 +10,35 @@ const Contact = () => {
   const MainContent = React.useRef( null );
   const navbarRef = React.useRef( null );
   React.useEffect( () => {
-    setInterval( () => {
-      if ( fixedHeader.current ) {
-        var slidHeight = fixedHeader.current.offsetHeight;
-      }
-      if ( MainContent.current ) {
-        MainContent.current.style.marginTop = slidHeight + "px";
+    const interval = setInterval( () => {
+      if ( fixedHeader.current && MainContent.current ) {
+        MainContent.current.style.marginTop =
+          fixedHeader.current.offsetHeight + "px";
       }
     }, 1000 );
-    var navbar = navbarRef.current;
-    if ( window.pageYOffset > 300 ) {
-      navbar.classList.add( "nav-scroll" );
-    } else {
-      navbar.classList.remove( "nav-scroll" );
-    }
-    window.addEventListener( "scroll", () => {
+
+    const navbar = navbarRef.current;
+    const onScroll = () => {
+      if (!navbar) return;
       if ( window.pageYOffset > 300 ) {
         navbar.classList.add( "nav-scroll" );
       } else {
         navbar.classList.remove( "nav-scroll" );
       }
-    } );
+    };
+    window.addEventListener( "scroll", onScroll );
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("scroll", onScroll);
+    };
   }, [] );
   return (
     <DarkTheme>
+      <SEO
+        title="Contact"
+        description="Get in touch with Pixels Soft for web design, mobile apps, and digital marketing projects. We would love to hear from you."
+        canonical="/contact/"
+      />
       <Navbar nr={navbarRef} />
       <ContactHeader sliderRef={fixedHeader} />
       <div className="main-content" ref={MainContent}>

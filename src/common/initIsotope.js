@@ -1,37 +1,45 @@
-const initIsotope = () => {
-  var grid = document.querySelectorAll(".gallery");
-  var iso;
+const setupIsotope = (Isotope) => {
+  const grid = document.querySelectorAll(".gallery");
+  if (!grid.length) return;
+
+  let iso;
   grid.forEach((item) => {
     iso = new Isotope(item, {
       itemSelector: ".items",
     });
   });
 
-  var filtersElem = document.querySelector(".filtering");
-  if (filtersElem) {
-    filtersElem.addEventListener("click", function (event) {
-      if (!matchesSelector(event.target, "span")) {
-        return;
-      }
-      var filterValue = event.target.getAttribute("data-filter");
-      filterValue = filterValue;
-      iso.arrange({ filter: filterValue });
+  const filtersElem = document.querySelector(".filtering");
+  if (!filtersElem || !iso) return;
+
+  filtersElem.addEventListener("click", function (event) {
+    if (!event.target.matches("span")) {
+      return;
+    }
+    const filterValue = event.target.getAttribute("data-filter");
+    iso.arrange({ filter: filterValue });
+  });
+
+  const buttonGroups = document.querySelectorAll(".filtering");
+  buttonGroups.forEach((buttonGroup) => {
+    buttonGroup.addEventListener("click", function (event) {
+      if (!event.target.matches("span")) return;
+      const active = buttonGroup.querySelector(".active");
+      if (active) active.classList.remove("active");
+      event.target.classList.add("active");
     });
-    var buttonGroups = document.querySelectorAll(".filtering");
-    for (var i = 0, len = buttonGroups.length; i < len; i++) {
-      var buttonGroup = buttonGroups[i];
-      radioButtonGroup(buttonGroup);
-    }
-    function radioButtonGroup(buttonGroup) {
-      buttonGroup.addEventListener("click", function (event) {
-        if (!matchesSelector(event.target, "span")) {
-          return;
-        }
-        buttonGroup.querySelector(".active").classList.remove("active");
-        event.target.classList.add("active");
-      });
-    }
-  }
+  });
+};
+
+const initIsotope = () => {
+  if (typeof window === "undefined") return;
+
+  import("isotope-layout")
+    .then((module) => {
+      const Isotope = module.default;
+      setupIsotope(Isotope);
+    })
+    .catch(() => {});
 };
 
 export default initIsotope;

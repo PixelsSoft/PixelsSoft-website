@@ -1,6 +1,35 @@
+# Dependencies
 /node_modules
 /.next
-.vercel
 
-# Local Netlify folder
+# Static export build (regenerate with yarn export)
+/out
+
+# Environment & secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+!.env.local.example
+
+# Deploy / hosting
+.vercel
 .netlify
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea
+.vscode
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# WordPress / database dumps (do not commit)
+*.sql

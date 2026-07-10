@@ -4,7 +4,6 @@ import Split from "../../Split";
 import Link from "next/link";
 import appData from "../../../data/app.json";
 import handleFullScreenNavbar from "../../../common/handleFullScreenNavbar";
-import Image from "next/image";
 
 const NavbarFullMenu = ( { theme, lr } ) => {
   React.useEffect( () => {
@@ -19,8 +18,10 @@ const NavbarFullMenu = ( { theme, lr } ) => {
         <div className="container-fluid">
           {/* <div className="logo"> */}
           {/* <a href="#0"> */}
-          <Link href='/'>
-            <Image src={`${appData.lightLogo}`} alt="logo" width={150} height={30} />
+          <Link href="/">
+            <a className="logo">
+              <img src={appData.lightLogo} alt="logo" />
+            </a>
           </Link>
           {/* </a> */}
           {/* </div> */}

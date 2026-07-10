@@ -7,7 +7,6 @@ import SwiperCore, { Navigation, Pagination, Parallax, Autoplay } from "swiper";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
-import Split from "../Split";
 import fadeWhenScroll from "../../common/fadeWhenScroll";
 import removeSlashFromPagination from "../../common/removeSlashFromPagination";
 
@@ -15,8 +14,12 @@ SwiperCore.use( [Navigation, Pagination, Parallax, Autoplay] );
 
 const IntroWithSlider1 = ( { sliderRef } ) => {
   const [load, setLoad] = React.useState( true );
+  const [activeIndex, setActiveIndex] = React.useState(0);
+  const [enableParallax, setEnableParallax] = React.useState(false);
+
   React.useEffect( () => {
     fadeWhenScroll();
+    setEnableParallax( window.innerWidth > 991 );
     setTimeout( () => {
       setLoad( false );
       removeSlashFromPagination();
@@ -40,7 +43,7 @@ const IntroWithSlider1 = ( { sliderRef } ) => {
               delay: 1000,
               disableOnInteraction: true,
             }}
-            parallax={true}
+            parallax={enableParallax}
             navigation={{
               prevEl: navigationPrevRef.current,
               nextEl: navigationNextRef.current,
@@ -55,13 +58,16 @@ const IntroWithSlider1 = ( { sliderRef } ) => {
               swiper.params.navigation.nextEl = navigationNextRef.current;
               swiper.params.pagination.el = paginationRef.current;
             }}
+            onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
             onSwiper={( swiper ) => {
               setTimeout( () => {
-                for ( var i = 0; i < swiper.slides.length; i++ ) {
-                  swiper.slides[i].childNodes[0].setAttribute(
-                    "data-swiper-parallax",
-                    0.75 * swiper.width
-                  );
+                if ( enableParallax ) {
+                  for ( var i = 0; i < swiper.slides.length; i++ ) {
+                    swiper.slides[i].childNodes[0].setAttribute(
+                      "data-swiper-parallax",
+                      0.75 * swiper.width
+                    );
+                  }
                 }
 
                 swiper.params.navigation.prevEl = navigationPrevRef.current;
@@ -81,7 +87,7 @@ const IntroWithSlider1 = ( { sliderRef } ) => {
             className="swiper-wrapper"
             slidesPerView={1}
           >
-            {introData.map( ( slide ) => (
+            {introData.map( ( slide, index ) => (
               <SwiperSlide key={slide.id} className="swiper-slide">
                 <div
                   className="bg-img valign"
@@ -92,20 +98,21 @@ const IntroWithSlider1 = ( { sliderRef } ) => {
                     <div className="row justify-content-center">
                       <div className="col-lg-7 col-md-9">
                         <div className="caption center">
-                          <Split>
-                            <h1 className="words chars splitting">
-                              {typeof slide.title === "object" ? (
-                                <>
-                                  {slide.title.first} <br />
-                                  {slide.title.second}
-                                </>
-                              ) : (
-                                slide.title
-                              )}
-                            </h1>
-                          </Split>
+                          <h1
+                            className="words chars splitting custom-font"
+                            aria-hidden={index !== activeIndex}
+                          >
+                            {typeof slide.title === "object" ? (
+                              <>
+                                {slide.title.first} <br />
+                                {slide.title.second}
+                              </>
+                            ) : (
+                              slide.title
+                            )}
+                          </h1>
                           {slide?.content && <p>{slide.content}</p>}
-                          <Link href="/about/about-dark">
+                          <Link href="/about/">
                             <a className="btn-curve btn-lit mt-30">
                               <span>Look More</span>
                             </a>

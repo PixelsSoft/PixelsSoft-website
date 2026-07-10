@@ -2,7 +2,6 @@
 import React from "react";
 import Split from "../Split";
 import AboutUs1Date from "../../data/sections/about-us1.json";
-import Image from 'next/image'
 
 const AboutUs1 = () => {
   return (
@@ -14,23 +13,15 @@ const AboutUs1 = () => {
               <div className="row">
                 <div className="col-md-5 cmd-padding valign">
                   <div className="img1 wow imago" data-wow-delay=".5s">
-                    <Image
-                      width={500}
-                      height={500}
-                      src={AboutUs1Date.image1} alt="" />
+                    <img src={AboutUs1Date.image1} alt="" width={500} height={500} />
                   </div>
                 </div>
                 <div className="col-md-7 cmd-padding">
                   <div className="img2 wow imago" data-wow-delay=".3s">
-                    <Image
-                      width={500}
-                      height={500}
-                      src={AboutUs1Date.image2} alt="" />
+                    <img src={AboutUs1Date.image2} alt="" width={500} height={500} />
                   </div>
                   <div className="img3 wow imago" data-wow-delay=".8s">
-                    <Image
-                      width={500}
-                      height={500} src={AboutUs1Date.image3} alt="" />
+                    <img src={AboutUs1Date.image3} alt="" width={500} height={500} />
                   </div>
                 </div>
               </div>

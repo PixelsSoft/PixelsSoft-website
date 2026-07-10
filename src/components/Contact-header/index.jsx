@@ -16,9 +16,9 @@ const ContactHeader = ({ sliderRef }) => {
           <div className="col-lg-9 col-md-11 static">
             <div className="capt mt-50">
               <div className="parlx">
-                <h2 className="custom-font">
+                <h1 className="custom-font">
                   <span>Let&apos;s</span>Talk About Your project.
-                </h2>
+                </h1>
                 <p>
                   Feel free to ask me any question or let&apos;s do to talk
                   about our future collaboration.

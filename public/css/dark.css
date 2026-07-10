@@ -4344,6 +4344,11 @@ header.simpl {
     .blog-pg .posts .pagination span.active a {
       border-color: #75dab4;
       color: #75dab4; }
+    .blog-pg .posts .pagination span.disabled a {
+      opacity: 0.35;
+      pointer-events: none; }
+    .blog-pg .posts .pagination span.dots a {
+      cursor: default; }
 
 .blog-pg.single .post .main-img .simpleParallax {
   height: 70vh;

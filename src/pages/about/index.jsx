@@ -6,6 +6,7 @@ import Clients1 from "../../components/Clients1";
 import Footer from "../../components/Footer";
 import MinimalArea from "../../components/Minimal-area";
 import Navbar from "../../components/Navbar";
+import SEO from "../../components/SEO";
 import Services4 from "../../components/Services4";
 import SkillsCircle from "../../components/Skills-circle";
 import Team1 from "../../components/Team1";
@@ -31,6 +32,11 @@ const AboutDark = () => {
   }, [navbarRef] );
   return (
     <DarkTheme>
+      <SEO
+        title="About Us"
+        description="Learn about Pixels Soft — our team, mission, and the creative digital services we provide to clients worldwide."
+        canonical="/about/"
+      />
       <Navbar nr={navbarRef} />
       <AboutHeader />
       <AboutIntro />

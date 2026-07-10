@@ -12,16 +12,15 @@ module.exports = {
   eslint: {
     ignoreDuringBuilds: false,
   },
-
-  webpack: ( config, { dev, isServer } ) => {
-    if ( !dev && !isServer ) {
-      Object.assign( config.resolve.alias, {
-        react: 'preact/compat',
-        'react-dom/test-utils': 'preact/test-utils',
-        'react-dom': 'preact/compat',
-      } );
-    }
-    return config;
+  images: {
+    domains: [
+      "cdn.sanity.io",
+      "admin.pixelssoft.com",
+      "pixelssoft.com",
+      "www.pixelssoft.com",
+      "localhost",
+      "127.0.0.1",
+    ],
+    unoptimized: true,
   },
 };
-

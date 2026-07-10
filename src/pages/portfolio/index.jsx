@@ -3,38 +3,56 @@ import DarkTheme from "../../layouts/Dark";
 import addParlx from "../../common/addParlx";
 import Navbar from "../../components/Navbar";
 import CallToAction from "../../components/Call-to-action";
-import PortfolioTwoColumn from "../../components/Portfolio-two-column";
 import PortfolioTreeColumn from "../../components/Portfolio-custom-column";
-import client from '../../config/sanity.config'
+import SEO from "../../components/SEO";
+import client from '../../config/sanity.config';
+import { fetchPortfolios, normalizePortfolioItems } from '../../lib/data';
 
-const Works4Dark = ( { portfolioItems } ) => {
-
+const Works4Dark = ( { portfolioItems: initialItems = [] } ) => {
+  const [portfolioItems, setPortfolioItems] = React.useState(initialItems);
   const fixedHeader = React.useRef( null );
   const MainContent = React.useRef( null );
   const navbarRef = React.useRef( null );
   const logoRef = React.useRef( null );
-
   const [pageLoaded, setPageLoaded] = React.useState( false );
+
+  React.useEffect(() => {
+    fetchPortfolios(initialItems).then((data) => {
+      setPortfolioItems(normalizePortfolioItems(data));
+    });
+  }, [initialItems]);
+
   React.useEffect( () => {
     setPageLoaded( true );
-    if ( pageLoaded ) {
-      addParlx();
-    }
+  }, [] );
+
+  React.useEffect( () => {
+    if ( !pageLoaded ) return;
+    const updateLayout = () => {
+      if ( !fixedHeader.current || !MainContent.current ) return;
+      if ( window.innerWidth <= 991 ) {
+        MainContent.current.style.marginTop = "0";
+        return;
+      }
+      MainContent.current.style.marginTop =
+        fixedHeader.current.offsetHeight + "px";
+    };
+    updateLayout();
+    addParlx();
+    window.addEventListener( "resize", updateLayout );
+    return () => window.removeEventListener( "resize", updateLayout );
   }, [pageLoaded] );
+
   React.useEffect( () => {
     var navbar = navbarRef.current;
-    if ( window.pageYOffset > 300 ) {
-      navbar.classList.add( "nav-scroll" );
-    } else {
-      navbar.classList.remove( "nav-scroll" );
-    }
-    window.addEventListener( "scroll", () => {
+    const onScroll = () => {
       if ( window.pageYOffset > 300 ) {
         navbar.classList.add( "nav-scroll" );
       } else {
         navbar.classList.remove( "nav-scroll" );
       }
-    } );
+    };
+    window.addEventListener( "scroll", onScroll );
     window.addEventListener( "load", () => {
       setTimeout( () => {
         if ( fixedHeader.current ) {
@@ -45,10 +63,16 @@ const Works4Dark = ( { portfolioItems } ) => {
         }
       }, 0 );
     } );
+    return () => window.removeEventListener("scroll", onScroll);
   }, [fixedHeader, MainContent, navbarRef] );
 
   return (
     <DarkTheme>
+      <SEO
+        title="Portfolio"
+        description="Explore Pixels Soft portfolio — web design, mobile apps, branding, and digital projects delivered for clients worldwide."
+        canonical="/portfolio/"
+      />
       <Navbar nr={navbarRef} lr={logoRef} />
       <header
         ref={fixedHeader}
@@ -59,12 +83,11 @@ const Works4Dark = ( { portfolioItems } ) => {
             <div className="col-lg-9 col-md-11 static">
               <div className="capt mt-50">
                 <div className="parlx">
-                  <h2 className="custom-font">My amazing works</h2>
+                  <h1 className="custom-font">My amazing works</h1>
                   <p>
                     Creative way to showcase your works at their absolute best.
                   </p>
                 </div>
-
                 <div className="bactxt custom-font valign">
                   <span className="full-width">Works</span>
                 </div>
@@ -74,15 +97,12 @@ const Works4Dark = ( { portfolioItems } ) => {
         </div>
       </header>
       <div ref={MainContent} className="main-content">
-
         <PortfolioTreeColumn column={3} portfolioItems={portfolioItems} />
         <CallToAction />
         <footer className="footer-half sub-bg">
           <div className="container">
             <div className="copyrights text-center mt-0">
-              <p>
-                Copyright © 2022 PixelsSoft. All rights reserved
-              </p>
+              <p>Copyright © {new Date().getFullYear()} PixelsSoft. All rights reserved</p>
             </div>
           </div>
         </footer>
@@ -92,15 +112,12 @@ const Works4Dark = ( { portfolioItems } ) => {
 };
 
 export async function getStaticProps() {
-
-  const query = `*[_type == "portfolio"]{_id, name, tags, image{asset->{path,url}}}`
-
-  const portfolioItems = await client.fetch( query )
-
-  return {
-    props: {
-      portfolioItems
-    }
+  try {
+    const query = `*[_type == "portfolio"]{_id, name, title, tags, image{asset->{path,url}}}`;
+    const portfolioItems = await client.fetch(query);
+    return { props: { portfolioItems } };
+  } catch {
+    return { props: { portfolioItems: [] } };
   }
 }
 

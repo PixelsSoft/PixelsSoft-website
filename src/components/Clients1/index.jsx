@@ -2,7 +2,6 @@
 import React from "react";
 import Clients1Data from "../../data/sections/clients1.json";
 import Split from "../Split";
-import Image from 'next/image'
 
 const Clients1 = ( { theme, subBG } ) => {
   var first = Clients1Data.slice( 0, Clients1Data.length / 2 );
@@ -39,17 +38,19 @@ const Clients1 = ( { theme, subBG } ) => {
                     >
                       <div className="img">
                         {theme === "light" ? (
-                          <Image
+                          <img
                             width={50}
                             height={50}
-                            priority
-                            src={item.lightImage} alt="" />
+                            src={item.lightImage}
+                            alt=""
+                          />
                         ) : (
-                          <Image
+                          <img
                             width={50}
                             height={50}
-                            priority
-                            src={item.darkImage} alt="" />
+                            src={item.darkImage}
+                            alt=""
+                          />
                         )}
                         <Split>
                           <a
@@ -95,17 +96,19 @@ const Clients1 = ( { theme, subBG } ) => {
                     >
                       <div className="img">
                         {theme === "light" ? (
-                          <Image
+                          <img
                             width={50}
                             height={50}
-                            priority
-                            src={item.lightImage} alt="" />
+                            src={item.lightImage}
+                            alt=""
+                          />
                         ) : (
-                          <Image
+                          <img
                             width={50}
                             height={50}
-                            priority
-                            src={item.darkImage} alt="" />
+                            src={item.darkImage}
+                            alt=""
+                          />
                         )}
                         <Split>
                           <a

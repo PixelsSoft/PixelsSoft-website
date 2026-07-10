@@ -2,7 +2,6 @@
 import React from "react";
 // import { Formik, Form, Field } from "formik";
 import Link from "next/link";
-import Image from "next/image";
 import appData from "../../data/app.json";
 import {
   handleDropdown,
@@ -22,11 +21,9 @@ const Navbar = ( { lr, nr, theme } ) => {
     >
       <div className="container">
         <Link href="/">
-          {/* <a className="logo"> */}
-        
-              <Image src={`${appData.lightLogo}`} alt="logo" height={30} width={150}/>
-            
-          {/* </a> */}
+          <a className="logo">
+            <img src={appData.lightLogo} alt="Pixels Soft logo" />
+          </a>
         </Link>
 
         <button

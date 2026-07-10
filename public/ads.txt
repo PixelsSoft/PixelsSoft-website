@@ -1,0 +1,2 @@
+# Placeholder ads.txt — replace publisher ID in Laravel admin after AdSense approval
+# google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0

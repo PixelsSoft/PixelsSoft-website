@@ -1,27 +1,57 @@
 import React from "react";
 import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
-import ShowcassesFullScreenData from "../../data/showcases-full-screen-slider.json";
 import SwiperCore, { Navigation, Parallax, Mousewheel } from "swiper";
 
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/mousewheel";
 import removeSlashFromPagination from "../../common/removeSlashFromPagination";
+import { getImageUrl } from "../../lib/media";
 
 SwiperCore.use([Navigation, Parallax, Mousewheel]);
 
-const ShowcasesOneCenter = ({showcaseItems}) => {
+const getTitleParts = (title) => {
+  if (typeof title === "object" && title !== null) {
+    return { first: title.first || "", second: title.second || "" };
+  }
+  if (typeof title === "string") {
+    const parts = title.split(" ");
+    return { first: parts[0] || title, second: parts.slice(1).join(" ") };
+  }
+  return { first: "Showcase", second: "Project" };
+};
+
+const ShowcaseTitle = ({ title, isPrimary }) => {
+  const { first, second } = getTitleParts(title);
+  const Tag = isPrimary ? "h1" : "p";
+
+  return (
+    <Tag className={isPrimary ? undefined : "showcase-slide-title"} aria-hidden={!isPrimary}>
+      <Link href="/portfolio/">
+        <a>
+          <div className="stroke">{first}</div>
+          <span>{second}</span>
+        </a>
+      </Link>
+    </Tag>
+  );
+};
+
+const ShowcasesOneCenter = ({ showcaseItems }) => {
   const [load, setLoad] = React.useState(true);
+  const [activeIndex, setActiveIndex] = React.useState(0);
+
   React.useEffect(() => {
     setTimeout(() => {
       setLoad(false);
-      removeSlashFromPagination()
+      removeSlashFromPagination();
     });
   }, []);
 
   const navigationPrevRef = React.useRef(null);
   const navigationNextRef = React.useRef(null);
+
   return (
     <header className="slider showcase-carus">
       <div id="content-carousel-container-unq-1" className="swiper-container">
@@ -38,27 +68,16 @@ const ShowcasesOneCenter = ({showcaseItems}) => {
               nextEl: navigationNextRef.current,
             }}
             breakpoints={{
-              0: {
-                slidesPerView: 1,
-                spaceBetween: 0,
-              },
-              640: {
-                slidesPerView: 1,
-                spaceBetween: 0,
-              },
-              768: {
-                slidesPerView: 2,
-                spaceBetween: 30,
-              },
-              1024: {
-                slidesPerView: 2,
-                spaceBetween: 200,
-              },
+              0: { slidesPerView: 1, spaceBetween: 0 },
+              640: { slidesPerView: 1, spaceBetween: 0 },
+              768: { slidesPerView: 2, spaceBetween: 30 },
+              1024: { slidesPerView: 2, spaceBetween: 200 },
             }}
             onBeforeInit={(swiper) => {
               swiper.params.navigation.prevEl = navigationPrevRef.current;
               swiper.params.navigation.nextEl = navigationNextRef.current;
             }}
+            onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
             onSwiper={(swiper) => {
               setTimeout(() => {
                 for (var i = 0; i < swiper.slides.length; i++) {
@@ -77,39 +96,32 @@ const ShowcasesOneCenter = ({showcaseItems}) => {
               });
             }}
             className="swiper-wrapper"
-            slidesPerView={4}
           >
-            {showcaseItems.map((slide) => (
-              <SwiperSlide key={slide._id} className="swiper-slide">
+            {showcaseItems.map((slide, index) => (
+              <SwiperSlide key={slide._id || slide.id || index} className="swiper-slide">
                 <div
                   className="bg-img valign"
                   style={{
-                    backgroundImage: `url(${slide.image.asset.url})`,
+                    backgroundImage: getImageUrl(slide.image)
+                      ? `url(${getImageUrl(slide.image)})`
+                      : undefined,
                   }}
                   data-overlay-dark="1"
                 >
                   <div className="caption ontop">
                     <div className="o-hidden">
-                      <h1>
-                        <Link href="/project-details2/project-details2-dark">
-                          <a>
-                            <div className="stroke">{slide.title.first}</div>
-                            <span>{slide.title.second}</span>
-                          </a>
-                        </Link>
-                      </h1>
+                      <ShowcaseTitle
+                        title={slide.title}
+                        isPrimary={index === activeIndex}
+                      />
                     </div>
                   </div>
                   <div className="copy-cap valign">
                     <div className="cap">
-                      <h1>
-                        <Link href="/project-details2/project-details2-dark">
-                          <a>
-                            <div className="stroke">{slide.title.first}</div>
-                            <span>{slide.title.second}</span>
-                          </a>
-                        </Link>
-                      </h1>
+                      <ShowcaseTitle
+                        title={slide.title}
+                        isPrimary={false}
+                      />
                     </div>
                   </div>
                 </div>
@@ -120,10 +132,10 @@ const ShowcasesOneCenter = ({showcaseItems}) => {
         <div className="txt-botm">
           <div
             ref={navigationNextRef}
-            className="swiper-button-next swiper-nav-ctrl cursor-pointer"
+            className="swiper-button-next swiper-nav-ctrl next-ctrl cursor-pointer"
           >
             <div>
-              <span className=" custom-font">Next Slide</span>
+              <span>Next Slide</span>
             </div>
             <div>
               <i className="fas fa-chevron-right"></i>
@@ -131,13 +143,13 @@ const ShowcasesOneCenter = ({showcaseItems}) => {
           </div>
           <div
             ref={navigationPrevRef}
-            className="swiper-button-prev swiper-nav-ctrl cursor-pointer"
+            className="swiper-button-prev swiper-nav-ctrl prev-ctrl cursor-pointer"
           >
             <div>
               <i className="fas fa-chevron-left"></i>
             </div>
             <div>
-              <span className="custom-font">Prev Slide</span>
+              <span>Prev Slide</span>
             </div>
           </div>
         </div>

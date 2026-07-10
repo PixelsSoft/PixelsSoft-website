@@ -20,28 +20,36 @@ const Homepage1 = () => {
   const logoRef = React.useRef( null );
 
   React.useEffect( () => {
-    setInterval( () => {
-      if ( fixedSlider.current ) {
-        var slidHeight = fixedSlider.current.offsetHeight;
+    const updateLayout = () => {
+      if ( !fixedSlider.current || !MainContent.current ) return;
+      if ( window.innerWidth <= 991 ) {
+        MainContent.current.style.marginTop = "0";
+        return;
       }
-      if ( MainContent.current ) {
-        MainContent.current.style.marginTop = slidHeight + "px";
-      }
-    }, 1000 );
-    var navbar = navbarRef.current;
-    if ( window.pageYOffset > 300 ) {
-      navbar.classList.add( "nav-scroll" );
-    } else {
-      navbar.classList.remove( "nav-scroll" );
-    }
-    window.addEventListener( "scroll", () => {
+      MainContent.current.style.marginTop =
+        fixedSlider.current.offsetHeight + "px";
+    };
+
+    updateLayout();
+    const interval = setInterval( updateLayout, 1000 );
+    window.addEventListener( "resize", updateLayout );
+
+    const navbar = navbarRef.current;
+    const onScroll = () => {
+      if (!navbar) return;
       if ( window.pageYOffset > 300 ) {
         navbar.classList.add( "nav-scroll" );
       } else {
         navbar.classList.remove( "nav-scroll" );
       }
-    } );
-  }, [fixedSlider, MainContent, navbarRef] );
+    };
+    window.addEventListener( "scroll", onScroll );
+    return () => {
+      clearInterval( interval );
+      window.removeEventListener( "resize", updateLayout );
+      window.removeEventListener( "scroll", onScroll );
+    };
+  }, [] );
 
   return (
     <DarkTheme>

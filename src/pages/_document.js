@@ -14,34 +14,16 @@ class MyDocument extends Document {
         <Head>
           <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
           <meta
-            name="keywords"
-            content="HTML5 Template Avo onepage themeforest"
-          />
-          <meta
             name="description"
-            content="Avo - Onepage Multi-Purpose HTML5 Template"
+            content="Pixels Soft delivers creative web design, mobile apps, graphic design, and digital marketing solutions for businesses worldwide."
           />
-          <meta name="author" content="" />
-          <link rel="shortcut icon" href="/img/favicon.ico" />
-          {/* Google Fonts */}
+          <meta name="author" content="Pixels Soft" />
+          <link rel="icon" type="image/png" href="/img/favicon.png" />
+          <link rel="apple-touch-icon" href="/img/favicon.png" />
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
           <link
-            href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900&display=swap"
-            rel="stylesheet"
-          />
-          <link
-            href="https://fonts.googleapis.com/css2?family=Barlow:wght@100;200;300;400;500;600;700;800;900&display=swap"
-            rel="stylesheet"
-          />
-          <link
-            href="https://fonts.googleapis.com/css?family=Playfair+Display:400,500,600,700,800,900&display=swap"
-            rel="stylesheet"
-          />
-          <link
-            href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap"
-            rel="stylesheet"
-          />
-          <link
-            href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@200;300;400;500;600;700&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap"
             rel="stylesheet"
           />
         </Head>

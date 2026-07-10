@@ -1,8 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
 import React from "react";
 import { Formik, Form, Field } from "formik";
+import Link from "next/link";
 import appData from "../../data/app.json";
-import Image from "next/image";
 
 const Footer = ( { noSubBG } ) => {
   function validateEmail( value ) {
@@ -23,7 +23,9 @@ const Footer = ( { noSubBG } ) => {
             <div className="cont">
               {/* <div className="logo"> */}
               {/* <a href="#0"> */}
-              <Image src={`${appData.lightLogo}`} alt="" width={150} height={30} />
+              <div className="logo">
+                <img src={appData.lightLogo} alt="Pixels Soft logo" />
+              </div>
               {/* </a> */}
               {/* </div> */}
               <div className="con-info custom-font">
@@ -112,7 +114,11 @@ const Footer = ( { noSubBG } ) => {
         </div>
         <div className="copyrights text-center">
           <p>
-            Copyright © 2022 PixelsSoft. All rights reserved
+            Copyright © {new Date().getFullYear()} PixelsSoft. All rights reserved.
+            {" "}
+            <Link href="/privacy-policy/"><a style={{ color: "inherit" }}>Privacy Policy</a></Link>
+            {" | "}
+            <Link href="/terms/"><a style={{ color: "inherit" }}>Terms</a></Link>
           </p>
         </div>
       </div>

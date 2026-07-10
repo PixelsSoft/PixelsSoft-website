@@ -6,7 +6,8 @@ import {PortableText} from '@portabletext/react'
 import portableTextComponents from '../../config/portable-text-components'
 
 const BlogDetails = ({post}) => {
-  const {content, image, author, date} = post
+  const {content, image, author, date, title} = post
+  const isHtmlContent = typeof content === 'string'
   function validateEmail(value) {
     let error;
     if (!value) {
@@ -24,13 +25,17 @@ const BlogDetails = ({post}) => {
           <div className="col-lg-11">
             <div className="post">
               <div className="img">
-                <img src={image.asset.url} alt="" />
+                <img src={image?.asset?.url || image?.url || ''} alt={title || "Blog featured image"} />
               </div>
               <div className="content pt-20">
                 <div className="row justify-content-center">
                   <div className="col-lg-10">
                     <div className="cont">
-                      <PortableText value={content} components={portableTextComponents} />
+                      {isHtmlContent ? (
+                        <div dangerouslySetInnerHTML={{ __html: content }} />
+                      ) : (
+                        <PortableText value={content} components={portableTextComponents} />
+                      )}
                     </div>
                     <div className="author">
                       <div className="author-img">
@@ -38,11 +43,11 @@ const BlogDetails = ({post}) => {
                       </div>
                       <div className="info">
                         <h6>
-                          <span>author :</span> {author.name}
+                          <span>author :</span> {typeof author === 'string' ? author : author?.name}
                         </h6>
-                        
+                        {author?.about && typeof author.about !== 'string' && (
                           <PortableText value={author.about} />
-                        
+                        )}
                         <div className="social">
                           <a href="#0">
                             <i className="fab fa-facebook-f"></i>

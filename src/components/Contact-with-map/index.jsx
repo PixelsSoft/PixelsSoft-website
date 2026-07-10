@@ -2,9 +2,23 @@ import React from "react";
 import { Formik, Form, Field } from "formik";
 import axios from 'axios';
 import Split from '../Split';
+import { submitContact } from '../../lib/api';
+import { fetchGoogleSettings } from '../../lib/data';
+
+const DEFAULT_MAP =
+  "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d19868.687203718404!2d-0.14297520856388865!3d51.502466162777694!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47d8a00baf21de75%3A0x52963a5addd52a99!2sLondon%2C%20UK!5e0!3m2!1sen!2seg!4v1644772966009!5m2!1sen!2seg";
 
 const ContactWithMap = ( { theme = "dark" } ) => {
   const messageRef = React.useRef( null );
+  const [mapUrl, setMapUrl] = React.useState(DEFAULT_MAP);
+
+  React.useEffect(() => {
+    fetchGoogleSettings({}).then((settings) => {
+      if (settings?.maps?.enabled && settings.maps.embed_url) {
+        setMapUrl(settings.maps.embed_url);
+      }
+    });
+  }, []);
   function validateEmail( value ) {
     let error;
     if ( !value ) {
@@ -30,30 +44,33 @@ const ContactWithMap = ( { theme = "dark" } ) => {
                     email: "",
                     message: "",
                   }}
-                  onSubmit={async ( values ) => {
+                  onSubmit={async ( values, { resetForm } ) => {
                     await sendMessage( 500 );
-                    // alert(JSON.stringify(values, null, 2));
-                    // show message
-                    const formData = new FormData();
-
-                    formData.append( 'name', values.name );
-                    formData.append( 'email', values.email );
-                    formData.append( 'message', values.message );
-
-                    const res = await axios.post( '/contact.php', formData );
-
-                    if ( !res ) return;
-
-                    messageRef.current.innerText =
-                      "Your Message has been successfully sent. I will contact you soon.";
-                    // Reset the values
-                    values.name = "";
-                    values.email = "";
-                    values.message = "";
-                    // clear message
+                    try {
+                      await submitContact({
+                        name: values.name,
+                        email: values.email,
+                        subject: 'Contact Form',
+                        message: values.message,
+                      });
+                      messageRef.current.innerText =
+                        "Your Message has been successfully sent. I will contact you soon.";
+                      resetForm();
+                    } catch {
+                      const formData = new FormData();
+                      formData.append('name', values.name);
+                      formData.append('email', values.email);
+                      formData.append('message', values.message);
+                      const res = await axios.post('/contact.php', formData);
+                      if (res) {
+                        messageRef.current.innerText =
+                          "Your Message has been successfully sent. I will contact you soon.";
+                        resetForm();
+                      }
+                    }
                     setTimeout( () => {
                       messageRef.current.innerText = "";
-                    }, 2000 );
+                    }, 4000 );
                   }}
                 >
                   {( { errors, touched } ) => (
@@ -161,10 +178,11 @@ const ContactWithMap = ( { theme = "dark" } ) => {
       </section>
       <div className="map" id="ieatmaps">
         <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d19868.687203718404!2d-0.14297520856388865!3d51.502466162777694!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47d8a00baf21de75%3A0x52963a5addd52a99!2sLondon%2C%20UK!5e0!3m2!1sen!2seg!4v1644772966009!5m2!1sen!2seg"
+          src={mapUrl}
           style={{ border: 0 }}
           allowFullScreen=""
           loading="lazy"
+          title="Pixels Soft office location"
         ></iframe>
       </div>
 

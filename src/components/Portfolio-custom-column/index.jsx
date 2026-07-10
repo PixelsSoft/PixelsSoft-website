@@ -1,9 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
 import React from "react";
 import Split from "../Split";
-import Link from "next/link";
 import initIsotope from "../../common/initIsotope";
-import portfolio1Data from "../../data/sections/portfolio1.json";
+import { getImageUrl } from "../../lib/media";
 
 const PortfolioCustomColumn = ( {
   portfolioItems,
@@ -15,15 +14,17 @@ const PortfolioCustomColumn = ( {
   const [pageLoaded, setPageLoaded] = React.useState( false );
   React.useEffect( () => {
     setPageLoaded( true );
-    if ( pageLoaded ) {
-      setTimeout( () => {
-        initIsotope();
-      }, 1000 );
-    }
-  }, [pageLoaded] );
-  console.log( "portfolioItemsportfolioItemsportfolioItems", portfolioItems )
-  return (
+  }, [] );
 
+  React.useEffect( () => {
+    if ( !pageLoaded ) return;
+    const timer = setTimeout( () => {
+      initIsotope();
+    }, 500 );
+    return () => clearTimeout( timer );
+  }, [pageLoaded, portfolioItems] );
+
+  return (
     <section className="portfolio section-padding pb-70">
       {!hideSectionTitle && (
         <div className="container">
@@ -66,7 +67,7 @@ const PortfolioCustomColumn = ( {
           <div className="gallery full-width">
             {portfolioItems.map( ( item, index ) => (
               <div
-                key={item?.id}
+                key={item?._id || item?.id || item?.slug || index}
                 className={`${column === 3
                   ? "col-lg-4 col-md-6"
                   : column === 2
@@ -82,7 +83,7 @@ const PortfolioCustomColumn = ( {
               >
                 <div className="item-img">
                   <a className="imago wow">
-                    <img src={item.image.asset.url} alt="image" />
+                    <img src={getImageUrl(item.image)} alt={item?.title || item?.name || "Portfolio project"} />
                     <div className="item-img-overlay"></div>
                   </a>
                 </div>
