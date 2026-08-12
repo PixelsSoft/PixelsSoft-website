@@ -8,6 +8,12 @@
         <h2>Audit Trail</h2>
         <a href="{{ route('admin.system.activity.export') }}" class="btn btn-outline btn-sm">Export CSV</a>
     </div>
+
+    @include('admin.partials.list-toolbar', [
+        'showSearch' => true,
+        'searchPlaceholder' => 'Search activity…',
+    ])
+
     <div class="table-wrap">
         <table>
             <thead>

@@ -8,9 +8,22 @@ use Illuminate\Http\Request;
 
 class ServiceAdminController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $services = Service::orderBy('sort_order')->paginate(15);
+        $services = Service::query()
+            ->when($request->filled('q'), function ($query) use ($request) {
+                $q = '%' . $request->string('q') . '%';
+                $query->where(function ($inner) use ($q) {
+                    $inner->where('title', 'like', $q)
+                        ->orWhere('description', 'like', $q)
+                        ->orWhere('icon', 'like', $q);
+                });
+            })
+            ->when($request->filled('status'), fn ($query) => $query->where('status', $request->string('status')))
+            ->orderBy('sort_order')
+            ->paginate(15)
+            ->withQueryString();
+
         return view('admin.services.index', compact('services'));
     }
 

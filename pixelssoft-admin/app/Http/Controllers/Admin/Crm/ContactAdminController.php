@@ -9,9 +9,21 @@ use Illuminate\Http\Request;
 
 class ContactAdminController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $contacts = Contact::with('company')->latest()->paginate(20);
+        $contacts = Contact::with('company')
+            ->when($request->filled('q'), function ($query) use ($request) {
+                $q = '%' . $request->string('q') . '%';
+                $query->where(function ($inner) use ($q) {
+                    $inner->where('name', 'like', $q)
+                        ->orWhere('email', 'like', $q)
+                        ->orWhere('phone', 'like', $q)
+                        ->orWhereHas('company', fn ($c) => $c->where('name', 'like', $q));
+                });
+            })
+            ->latest()
+            ->paginate(20)
+            ->withQueryString();
 
         return view('admin.crm.contacts.index', compact('contacts'));
     }

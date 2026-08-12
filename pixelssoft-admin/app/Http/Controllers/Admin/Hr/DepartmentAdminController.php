@@ -9,9 +9,20 @@ use Illuminate\Http\Request;
 
 class DepartmentAdminController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $departments = Department::with('manager')->withCount('employees')->orderBy('name')->get();
+        $departments = Department::with('manager')
+            ->withCount('employees')
+            ->when($request->filled('q'), function ($query) use ($request) {
+                $q = '%' . $request->string('q') . '%';
+                $query->where(function ($inner) use ($q) {
+                    $inner->where('name', 'like', $q)
+                        ->orWhereHas('manager', fn ($m) => $m->where('name', 'like', $q));
+                });
+            })
+            ->orderBy('name')
+            ->paginate(30)
+            ->withQueryString();
 
         return view('admin.hr.departments.index', compact('departments'));
     }

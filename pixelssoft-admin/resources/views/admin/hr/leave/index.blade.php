@@ -10,6 +10,23 @@
             <a href="{{ route('admin.hr.leave.create') }}" class="btn btn-primary">+ Request Leave</a>
         @endcan
     </div>
+
+    @include('admin.partials.list-toolbar', [
+        'showSearch' => true,
+        'searchPlaceholder' => 'Search leave requests…',
+        'filters' => [
+            [
+                'name' => 'status',
+                'label' => 'All statuses',
+                'options' => [
+                    'pending' => 'Pending',
+                    'approved' => 'Approved',
+                    'rejected' => 'Rejected',
+                ],
+            ],
+        ],
+    ])
+
     <div class="table-wrap">
         <table>
             <thead>

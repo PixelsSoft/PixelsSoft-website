@@ -10,6 +10,23 @@
             <a href="{{ route('admin.accounts.expenses.create') }}" class="btn btn-primary">+ Submit Expense</a>
         @endcan
     </div>
+
+    @include('admin.partials.list-toolbar', [
+        'showSearch' => true,
+        'searchPlaceholder' => 'Search expenses…',
+        'filters' => [
+            [
+                'name' => 'status',
+                'label' => 'All statuses',
+                'options' => [
+                    'pending' => 'Pending',
+                    'approved' => 'Approved',
+                    'rejected' => 'Rejected',
+                ],
+            ],
+        ],
+    ])
+
     <div class="table-wrap">
         <table>
             <thead>

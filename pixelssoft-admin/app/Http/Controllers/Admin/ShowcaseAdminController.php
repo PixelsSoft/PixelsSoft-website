@@ -8,9 +8,22 @@ use Illuminate\Http\Request;
 
 class ShowcaseAdminController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $showcases = Showcase::orderBy('sort_order')->paginate(15);
+        $showcases = Showcase::query()
+            ->when($request->filled('q'), function ($query) use ($request) {
+                $q = '%' . $request->string('q') . '%';
+                $query->where(function ($inner) use ($q) {
+                    $inner->where('title_line1', 'like', $q)
+                        ->orWhere('title_line2', 'like', $q)
+                        ->orWhere('link', 'like', $q);
+                });
+            })
+            ->when($request->filled('status'), fn ($query) => $query->where('status', $request->string('status')))
+            ->orderBy('sort_order')
+            ->paginate(15)
+            ->withQueryString();
+
         return view('admin.showcases.index', compact('showcases'));
     }
 

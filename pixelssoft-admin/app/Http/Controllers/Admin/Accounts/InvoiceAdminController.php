@@ -14,9 +14,20 @@ use Illuminate\Http\Request;
 
 class InvoiceAdminController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $invoices = Invoice::with('company')->latest()->paginate(20);
+        $invoices = Invoice::with('company')
+            ->when($request->filled('q'), function ($query) use ($request) {
+                $q = '%' . $request->string('q') . '%';
+                $query->where(function ($inner) use ($q) {
+                    $inner->where('number', 'like', $q)
+                        ->orWhereHas('company', fn ($c) => $c->where('name', 'like', $q));
+                });
+            })
+            ->when($request->filled('status'), fn ($query) => $query->where('status', $request->string('status')))
+            ->latest()
+            ->paginate(20)
+            ->withQueryString();
 
         return view('admin.accounts.invoices.index', compact('invoices'));
     }

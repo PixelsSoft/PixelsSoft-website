@@ -10,14 +10,26 @@ use Illuminate\Http\Request;
 
 class TimeEntryAdminController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $query = TimeEntry::with(['project', 'task', 'user'])->latest('date');
+        $query = TimeEntry::with(['project', 'task', 'user'])
+            ->when($request->filled('q'), function ($q) use ($request) {
+                $term = '%' . $request->string('q') . '%';
+                $q->where(function ($inner) use ($term) {
+                    $inner->where('description', 'like', $term)
+                        ->orWhereHas('project', fn ($p) => $p->where('name', 'like', $term)->orWhere('code', 'like', $term))
+                        ->orWhereHas('task', fn ($t) => $t->where('title', 'like', $term))
+                        ->orWhereHas('user', fn ($u) => $u->where('name', 'like', $term));
+                });
+            })
+            ->when($request->input('status') === 'approved', fn ($q) => $q->whereNotNull('approved_at'))
+            ->when($request->input('status') === 'pending', fn ($q) => $q->whereNull('approved_at'))
+            ->latest('date');
 
         if (auth()->user()->can('pm.time.view-all')) {
-            $entries = $query->paginate(30);
+            $entries = $query->paginate(30)->withQueryString();
         } else {
-            $entries = $query->where('user_id', auth()->id())->paginate(30);
+            $entries = $query->where('user_id', auth()->id())->paginate(30)->withQueryString();
         }
 
         return view('admin.pm.time.index', compact('entries'));

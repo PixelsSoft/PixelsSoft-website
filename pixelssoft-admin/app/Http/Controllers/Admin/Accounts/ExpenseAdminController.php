@@ -11,15 +11,27 @@ use Illuminate\Http\Request;
 
 class ExpenseAdminController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $query = Expense::with(['category', 'submitter', 'project'])->latest('date');
+        $query = Expense::with(['category', 'submitter', 'project'])
+            ->when($request->filled('q'), function ($q) use ($request) {
+                $term = '%' . $request->string('q') . '%';
+                $q->where(function ($inner) use ($term) {
+                    $inner->where('vendor', 'like', $term)
+                        ->orWhere('description', 'like', $term)
+                        ->orWhereHas('category', fn ($c) => $c->where('name', 'like', $term))
+                        ->orWhereHas('project', fn ($p) => $p->where('name', 'like', $term))
+                        ->orWhereHas('submitter', fn ($s) => $s->where('name', 'like', $term));
+                });
+            })
+            ->when($request->filled('status'), fn ($q) => $q->where('status', $request->string('status')))
+            ->latest('date');
 
         if (!auth()->user()->can('accounts.expenses.view-all')) {
             $query->where('submitted_by', auth()->id());
         }
 
-        $expenses = $query->paginate(20);
+        $expenses = $query->paginate(20)->withQueryString();
 
         return view('admin.accounts.expenses.index', compact('expenses'));
     }

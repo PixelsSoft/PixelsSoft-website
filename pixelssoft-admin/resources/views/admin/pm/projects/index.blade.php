@@ -10,6 +10,25 @@
             <a href="{{ route('admin.pm.projects.create') }}" class="btn btn-primary">+ New Project</a>
         @endcan
     </div>
+
+    @include('admin.partials.list-toolbar', [
+        'showSearch' => true,
+        'searchPlaceholder' => 'Search projects…',
+        'filters' => [
+            [
+                'name' => 'status',
+                'label' => 'All statuses',
+                'options' => [
+                    'planning' => 'Planning',
+                    'active' => 'Active',
+                    'on_hold' => 'On hold',
+                    'completed' => 'Completed',
+                    'cancelled' => 'Cancelled',
+                ],
+            ],
+        ],
+    ])
+
     <div class="table-wrap">
         <table>
             <thead><tr><th>Name</th><th>Code</th><th>Company</th><th>Status</th><th>Priority</th><th>Tasks</th><th>Manager</th><th>Actions</th></tr></thead>
@@ -23,12 +42,19 @@
                         <td>{{ $project->priority }}</td>
                         <td>{{ $project->tasks_count }}</td>
                         <td>{{ $project->manager?->name ?? '—' }}</td>
-                        <td class="actions">
+                        <td class="table-actions">
+                            <a href="{{ route('admin.pm.projects.show', $project) }}" class="btn btn-sm btn-outline">View</a>
                             @can('pm.tasks.view')
                                 <a href="{{ route('admin.pm.projects.tasks.kanban', $project) }}" class="btn btn-sm btn-outline">Tasks</a>
                             @endcan
                             @can('pm.projects.edit')
                                 <a href="{{ route('admin.pm.projects.edit', $project) }}" class="btn btn-sm btn-outline">Edit</a>
+                            @endcan
+                            @can('pm.projects.delete')
+                                <form action="{{ route('admin.pm.projects.destroy', $project) }}" method="POST" onsubmit="return confirm('Delete?')">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                </form>
                             @endcan
                         </td>
                     </tr>

@@ -11,9 +11,25 @@ use Illuminate\Http\Request;
 
 class HrPayrollAdminController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $runs = PayrollRun::with('processor')->withCount('items')->latest('year')->latest('month')->paginate(12);
+        $runs = PayrollRun::with('processor')
+            ->withCount('items')
+            ->when($request->filled('q'), function ($query) use ($request) {
+                $term = trim((string) $request->string('q'));
+                $q = '%' . $term . '%';
+                $query->where(function ($inner) use ($q, $term) {
+                    $inner->whereHas('processor', fn ($p) => $p->where('name', 'like', $q));
+                    if (ctype_digit($term)) {
+                        $inner->orWhere('year', (int) $term)->orWhere('month', (int) $term);
+                    }
+                });
+            })
+            ->when($request->filled('status'), fn ($query) => $query->where('status', $request->string('status')))
+            ->latest('year')
+            ->latest('month')
+            ->paginate(12)
+            ->withQueryString();
 
         return view('admin.hr.payroll.index', compact('runs'));
     }

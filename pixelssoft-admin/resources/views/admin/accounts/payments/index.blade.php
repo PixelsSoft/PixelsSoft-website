@@ -8,9 +8,28 @@
         <h2>Payments</h2>
         <a href="{{ route('admin.accounts.invoices.index') }}" class="btn btn-sm btn-outline">Invoices</a>
     </div>
+
+    @include('admin.partials.list-toolbar', [
+        'showSearch' => true,
+        'searchPlaceholder' => 'Search payments…',
+        'filters' => [
+            [
+                'name' => 'method',
+                'label' => 'All methods',
+                'options' => [
+                    'bank_transfer' => 'Bank transfer',
+                    'cash' => 'Cash',
+                    'card' => 'Card',
+                    'check' => 'Check',
+                    'other' => 'Other',
+                ],
+            ],
+        ],
+    ])
+
     <div class="table-wrap">
         <table>
-            <thead><tr><th>Date</th><th>Invoice</th><th>Company</th><th>Amount</th><th>Method</th><th>Reference</th></tr></thead>
+            <thead><tr><th>Date</th><th>Invoice</th><th>Company</th><th>Amount</th><th>Method</th><th>Reference</th><th>Actions</th></tr></thead>
             <tbody>
                 @forelse($payments as $payment)
                     <tr>
@@ -26,9 +45,16 @@
                         <td>{{ $payment->invoice?->currency ?? 'USD' }} {{ number_format($payment->amount, 2) }}</td>
                         <td>{{ str_replace('_', ' ', $payment->method) }}</td>
                         <td>{{ $payment->reference ?? '—' }}</td>
+                        <td class="table-actions">
+                            @can('accounts.invoices.view')
+                                @if($payment->invoice)
+                                    <a href="{{ route('admin.accounts.invoices.show', $payment->invoice) }}" class="btn btn-sm btn-outline">View Invoice</a>
+                                @endif
+                            @endcan
+                        </td>
                     </tr>
                 @empty
-                    <tr><td colspan="6" class="empty-state">No payments yet.</td></tr>
+                    <tr><td colspan="7" class="empty-state">No payments yet.</td></tr>
                 @endforelse
             </tbody>
         </table>

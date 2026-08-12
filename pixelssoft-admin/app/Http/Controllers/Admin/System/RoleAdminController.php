@@ -10,9 +10,16 @@ use Spatie\Permission\PermissionRegistrar;
 
 class RoleAdminController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $roles = Role::withCount('users', 'permissions')->orderBy('name')->get();
+        $roles = Role::withCount('users', 'permissions')
+            ->when($request->filled('q'), function ($query) use ($request) {
+                $q = '%' . $request->string('q') . '%';
+                $query->where('name', 'like', $q);
+            })
+            ->orderBy('name')
+            ->paginate(30)
+            ->withQueryString();
 
         return view('admin.system.roles.index', compact('roles'));
     }

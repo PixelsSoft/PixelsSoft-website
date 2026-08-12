@@ -32,6 +32,22 @@
 
 <div class="card">
     <div class="card-header"><h2>Payroll Runs</h2></div>
+
+    @include('admin.partials.list-toolbar', [
+        'showSearch' => true,
+        'searchPlaceholder' => 'Search by year, month, processor…',
+        'filters' => [
+            [
+                'name' => 'status',
+                'label' => 'All statuses',
+                'options' => [
+                    'draft' => 'Draft',
+                    'processed' => 'Processed',
+                ],
+            ],
+        ],
+    ])
+
     <div class="table-wrap">
         <table>
             <thead><tr><th>Period</th><th>Status</th><th>Employees</th><th>Processed By</th><th>Processed At</th><th>Actions</th></tr></thead>

@@ -35,6 +35,12 @@
 
 <div class="card">
     <div class="card-header"><h2>Departments</h2></div>
+
+    @include('admin.partials.list-toolbar', [
+        'showSearch' => true,
+        'searchPlaceholder' => 'Search departments…',
+    ])
+
     <div class="table-wrap">
         <table>
             <thead><tr><th>Name</th><th>Manager</th><th>Employees</th>@can('hr.employees.edit')<th>Actions</th>@endcan</tr></thead>
@@ -61,7 +67,7 @@
                                 <button type="submit" form="dept-{{ $department->id }}" class="btn btn-sm btn-primary">Save</button>
                                 <form action="{{ route('admin.hr.departments.destroy', $department) }}" method="POST" style="display:inline" onsubmit="return confirm('Delete this department?')">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline">Delete</button>
+                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                                 </form>
                             </td>
                         @else
@@ -76,5 +82,6 @@
             </tbody>
         </table>
     </div>
+    {{ $departments->links() }}
 </div>
 @endsection

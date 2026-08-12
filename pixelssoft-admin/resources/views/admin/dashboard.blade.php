@@ -88,7 +88,7 @@
         <div class="table-wrap">
             <table>
                 <thead>
-                    <tr><th>Name</th><th>Email</th><th>Subject</th><th>Date</th><th>Status</th></tr>
+                    <tr><th>Name</th><th>Email</th><th>Subject</th><th>Date</th><th>Status</th><th>Actions</th></tr>
                 </thead>
                 <tbody>
                     @foreach($recentMessages as $message)
@@ -103,6 +103,16 @@
                                 @else
                                     <span class="badge badge-unread">New</span>
                                 @endif
+                            </td>
+                            <td class="table-actions">
+                                @if(!$message->is_read)
+                                    <form action="{{ route('admin.messages.read', $message) }}" method="POST">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" class="btn btn-sm btn-accent">Mark Read</button>
+                                    </form>
+                                @endif
+                                <a href="{{ route('admin.messages.index') }}" class="btn btn-sm btn-outline">View</a>
                             </td>
                         </tr>
                     @endforeach

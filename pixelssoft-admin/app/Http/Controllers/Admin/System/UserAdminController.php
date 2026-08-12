@@ -10,9 +10,19 @@ use Spatie\Permission\Models\Role;
 
 class UserAdminController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::with('roles')->latest()->paginate(20);
+        $users = User::with('roles')
+            ->when($request->filled('q'), function ($query) use ($request) {
+                $q = '%' . $request->string('q') . '%';
+                $query->where(function ($inner) use ($q) {
+                    $inner->where('name', 'like', $q)->orWhere('email', 'like', $q);
+                });
+            })
+            ->when($request->filled('status'), fn ($query) => $query->where('status', $request->string('status')))
+            ->latest()
+            ->paginate(20)
+            ->withQueryString();
 
         return view('admin.system.users.index', compact('users'));
     }

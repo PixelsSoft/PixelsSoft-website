@@ -36,6 +36,23 @@
 
 <div class="card">
     <div class="card-header"><h2>Pending Invitations</h2></div>
+
+    @include('admin.partials.list-toolbar', [
+        'showSearch' => true,
+        'searchPlaceholder' => 'Search invitations…',
+        'filters' => [
+            [
+                'name' => 'status',
+                'label' => 'All statuses',
+                'options' => [
+                    'pending' => 'Pending',
+                    'accepted' => 'Accepted',
+                    'expired' => 'Expired',
+                ],
+            ],
+        ],
+    ])
+
     <div class="table-wrap">
         <table>
             <thead>

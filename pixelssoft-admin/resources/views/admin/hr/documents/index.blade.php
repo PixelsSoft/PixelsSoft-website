@@ -51,6 +51,24 @@
 
 <div class="card">
     <div class="card-header"><h2>Documents</h2></div>
+
+    @include('admin.partials.list-toolbar', [
+        'showSearch' => true,
+        'searchPlaceholder' => 'Search documents…',
+        'filters' => [
+            [
+                'name' => 'type',
+                'label' => 'All types',
+                'options' => [
+                    'contract' => 'Contract',
+                    'id' => 'ID Document',
+                    'certificate' => 'Certificate',
+                    'other' => 'Other',
+                ],
+            ],
+        ],
+    ])
+
     <div class="table-wrap">
         <table>
             <thead><tr><th>Employee</th><th>Type</th><th>Title</th><th>Expiry</th><th>Uploaded</th><th>Actions</th></tr></thead>
@@ -75,9 +93,9 @@
                         <td class="actions">
                             <a href="{{ asset(ltrim($document->file_path, '/')) }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline">Download</a>
                             @can('hr.documents.manage')
-                                <form action="{{ route('admin.hr.documents.destroy', $document) }}" method="POST" style="display:inline" onsubmit="return confirm('Delete this document?')">
+                                <form action="{{ route('admin.hr.documents.destroy', $document) }}" method="POST" onsubmit="return confirm('Delete this document?')">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline">Delete</button>
+                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                                 </form>
                             @endcan
                         </td>

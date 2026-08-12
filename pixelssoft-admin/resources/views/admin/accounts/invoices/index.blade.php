@@ -10,6 +10,25 @@
             <a href="{{ route('admin.accounts.invoices.create') }}" class="btn btn-primary">+ New Invoice</a>
         @endcan
     </div>
+
+    @include('admin.partials.list-toolbar', [
+        'showSearch' => true,
+        'searchPlaceholder' => 'Search invoices…',
+        'filters' => [
+            [
+                'name' => 'status',
+                'label' => 'All statuses',
+                'options' => [
+                    'draft' => 'Draft',
+                    'sent' => 'Sent',
+                    'paid' => 'Paid',
+                    'overdue' => 'Overdue',
+                    'cancelled' => 'Cancelled',
+                ],
+            ],
+        ],
+    ])
+
     <div class="table-wrap">
         <table>
             <thead><tr><th>Number</th><th>Company</th><th>Status</th><th>Issue Date</th><th>Due Date</th><th>Total</th><th>Actions</th></tr></thead>
@@ -22,9 +41,16 @@
                         <td>{{ $invoice->issue_date->format('M d, Y') }}</td>
                         <td>{{ $invoice->due_date?->format('M d, Y') ?? '—' }}</td>
                         <td>{{ $invoice->currency }} {{ number_format($invoice->total, 2) }}</td>
-                        <td class="actions">
+                        <td class="table-actions">
+                            <a href="{{ route('admin.accounts.invoices.show', $invoice) }}" class="btn btn-sm btn-outline">View</a>
                             @can('accounts.invoices.edit')
                                 <a href="{{ route('admin.accounts.invoices.edit', $invoice) }}" class="btn btn-sm btn-outline">Edit</a>
+                            @endcan
+                            @can('accounts.invoices.delete')
+                                <form action="{{ route('admin.accounts.invoices.destroy', $invoice) }}" method="POST" onsubmit="return confirm('Delete?')">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                </form>
                             @endcan
                         </td>
                     </tr>

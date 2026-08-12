@@ -9,9 +9,28 @@ use Spatie\Permission\Models\Role;
 
 class InvitationAdminController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $invitations = UserInvitation::with('inviter')->latest()->paginate(20);
+        $invitations = UserInvitation::with('inviter')
+            ->when($request->filled('q'), function ($query) use ($request) {
+                $q = '%' . $request->string('q') . '%';
+                $query->where(function ($inner) use ($q) {
+                    $inner->where('email', 'like', $q)
+                        ->orWhere('name', 'like', $q)
+                        ->orWhereHas('inviter', fn ($i) => $i->where('name', 'like', $q));
+                });
+            })
+            ->when($request->input('status') === 'accepted', fn ($query) => $query->whereNotNull('accepted_at'))
+            ->when($request->input('status') === 'pending', function ($query) {
+                $query->whereNull('accepted_at')->where('expires_at', '>=', now());
+            })
+            ->when($request->input('status') === 'expired', function ($query) {
+                $query->whereNull('accepted_at')->where('expires_at', '<', now());
+            })
+            ->latest()
+            ->paginate(20)
+            ->withQueryString();
+
         $roles = Role::orderBy('name')->pluck('name');
 
         return view('admin.system.invitations.index', compact('invitations', 'roles'));

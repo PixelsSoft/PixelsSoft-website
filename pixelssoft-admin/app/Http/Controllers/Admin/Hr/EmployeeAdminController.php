@@ -10,9 +10,24 @@ use Illuminate\Http\Request;
 
 class EmployeeAdminController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $employees = Employee::with(['department', 'user'])->latest()->paginate(20);
+        $employees = Employee::with(['department', 'user'])
+            ->when($request->filled('q'), function ($query) use ($request) {
+                $q = '%' . $request->string('q') . '%';
+                $query->where(function ($inner) use ($q) {
+                    $inner->where('employee_code', 'like', $q)
+                        ->orWhere('position', 'like', $q)
+                        ->orWhere('phone', 'like', $q)
+                        ->orWhereHas('user', fn ($u) => $u->where('name', 'like', $q)->orWhere('email', 'like', $q))
+                        ->orWhereHas('department', fn ($d) => $d->where('name', 'like', $q));
+                });
+            })
+            ->when($request->filled('status'), fn ($query) => $query->where('status', $request->string('status')))
+            ->when($request->filled('employment_type'), fn ($query) => $query->where('employment_type', $request->string('employment_type')))
+            ->latest()
+            ->paginate(20)
+            ->withQueryString();
 
         return view('admin.hr.employees.index', compact('employees'));
     }

@@ -9,9 +9,24 @@ use Illuminate\Http\Request;
 
 class PaymentAdminController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $payments = Payment::with('invoice.company')->latest('paid_at')->paginate(20);
+        $payments = Payment::with('invoice.company')
+            ->when($request->filled('q'), function ($query) use ($request) {
+                $q = '%' . $request->string('q') . '%';
+                $query->where(function ($inner) use ($q) {
+                    $inner->where('reference', 'like', $q)
+                        ->orWhere('method', 'like', $q)
+                        ->orWhereHas('invoice', function ($invoice) use ($q) {
+                            $invoice->where('number', 'like', $q)
+                                ->orWhereHas('company', fn ($c) => $c->where('name', 'like', $q));
+                        });
+                });
+            })
+            ->when($request->filled('method'), fn ($query) => $query->where('method', $request->string('method')))
+            ->latest('paid_at')
+            ->paginate(20)
+            ->withQueryString();
 
         return view('admin.accounts.payments.index', compact('payments'));
     }

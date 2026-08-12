@@ -10,9 +10,23 @@ use Illuminate\Http\Request;
 
 class HrDocumentAdminController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $documents = HrDocument::with('employee.user')->latest()->paginate(20);
+        $documents = HrDocument::with('employee.user')
+            ->when($request->filled('q'), function ($query) use ($request) {
+                $q = '%' . $request->string('q') . '%';
+                $query->where(function ($inner) use ($q) {
+                    $inner->where('title', 'like', $q)
+                        ->orWhere('type', 'like', $q)
+                        ->orWhereHas('employee.user', fn ($u) => $u->where('name', 'like', $q))
+                        ->orWhereHas('employee', fn ($e) => $e->where('employee_code', 'like', $q));
+                });
+            })
+            ->when($request->filled('type'), fn ($query) => $query->where('type', $request->string('type')))
+            ->latest()
+            ->paginate(20)
+            ->withQueryString();
+
         $employees = Employee::with('user')->where('status', 'active')->orderBy('employee_code')->get();
 
         return view('admin.hr.documents.index', compact('documents', 'employees'));

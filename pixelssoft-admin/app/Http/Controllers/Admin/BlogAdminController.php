@@ -9,9 +9,22 @@ use Illuminate\Support\Str;
 
 class BlogAdminController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $blogs = Blog::latest()->paginate(15);
+        $blogs = Blog::query()
+            ->when($request->filled('q'), function ($query) use ($request) {
+                $q = '%' . $request->string('q') . '%';
+                $query->where(function ($inner) use ($q) {
+                    $inner->where('title', 'like', $q)
+                        ->orWhere('slug', 'like', $q)
+                        ->orWhere('category', 'like', $q);
+                });
+            })
+            ->when($request->filled('status'), fn ($query) => $query->where('status', $request->string('status')))
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
+
         return view('admin.blogs.index', compact('blogs'));
     }
 

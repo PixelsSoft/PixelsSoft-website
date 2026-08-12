@@ -48,6 +48,11 @@
 
     <div class="card-header"><h2>Media Files ({{ $media->total() }})</h2></div>
 
+    @include('admin.partials.list-toolbar', [
+        'showSearch' => true,
+        'searchPlaceholder' => 'Search media…',
+    ])
+
     @if($media->count())
 
         <div class="media-grid">

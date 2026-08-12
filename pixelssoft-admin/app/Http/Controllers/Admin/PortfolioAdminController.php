@@ -8,9 +8,22 @@ use Illuminate\Http\Request;
 
 class PortfolioAdminController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $portfolios = Portfolio::orderBy('sort_order')->paginate(15);
+        $portfolios = Portfolio::query()
+            ->when($request->filled('q'), function ($query) use ($request) {
+                $q = '%' . $request->string('q') . '%';
+                $query->where(function ($inner) use ($q) {
+                    $inner->where('title', 'like', $q)
+                        ->orWhere('category', 'like', $q)
+                        ->orWhere('client', 'like', $q);
+                });
+            })
+            ->when($request->filled('status'), fn ($query) => $query->where('status', $request->string('status')))
+            ->orderBy('sort_order')
+            ->paginate(15)
+            ->withQueryString();
+
         return view('admin.portfolios.index', compact('portfolios'));
     }
 

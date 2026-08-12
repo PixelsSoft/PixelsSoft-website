@@ -10,6 +10,22 @@
             <a href="{{ route('admin.pm.time.create') }}" class="btn btn-primary">+ Log Time</a>
         @endcan
     </div>
+
+    @include('admin.partials.list-toolbar', [
+        'showSearch' => true,
+        'searchPlaceholder' => 'Search time entries…',
+        'filters' => [
+            [
+                'name' => 'status',
+                'label' => 'All statuses',
+                'options' => [
+                    'pending' => 'Pending',
+                    'approved' => 'Approved',
+                ],
+            ],
+        ],
+    ])
+
     <div class="table-wrap">
         <table>
             <thead><tr><th>Date</th><th>Project</th><th>Task</th>@can('pm.time.view-all')<th>User</th>@endcan<th>Hours</th><th>Billable</th><th>Status</th><th>Actions</th></tr></thead>
@@ -41,9 +57,9 @@
                                 @endif
                             @endcan
                             @can('pm.time.view-own')
-                                <form action="{{ route('admin.pm.time.destroy', $entry) }}" method="POST" style="display:inline" onsubmit="return confirm('Delete this entry?')">
+                                <form action="{{ route('admin.pm.time.destroy', $entry) }}" method="POST" onsubmit="return confirm('Delete this entry?')">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline">Delete</button>
+                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                                 </form>
                             @endcan
                         </td>

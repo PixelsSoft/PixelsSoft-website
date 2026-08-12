@@ -20,14 +20,22 @@ class MediaAdminController extends Controller
 
 {
 
-    public function index()
-
+    public function index(Request $request)
     {
-
-        $media = Media::latest()->paginate(20);
+        $media = Media::query()
+            ->when($request->filled('q'), function ($query) use ($request) {
+                $q = '%' . $request->string('q') . '%';
+                $query->where(function ($inner) use ($q) {
+                    $inner->where('filename', 'like', $q)
+                        ->orWhere('alt_text', 'like', $q)
+                        ->orWhere('path', 'like', $q);
+                });
+            })
+            ->latest()
+            ->paginate(20)
+            ->withQueryString();
 
         return view('admin.media.index', compact('media'));
-
     }
 
 

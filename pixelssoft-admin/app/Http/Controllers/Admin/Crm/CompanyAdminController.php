@@ -9,9 +9,20 @@ use Illuminate\Http\Request;
 
 class CompanyAdminController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $companies = Company::with('owner')->withCount('contacts', 'deals')->latest()->paginate(20);
+        $companies = Company::with('owner')
+            ->withCount('contacts', 'deals')
+            ->when($request->filled('q'), function ($query) use ($request) {
+                $q = '%' . $request->string('q') . '%';
+                $query->where(function ($inner) use ($q) {
+                    $inner->where('name', 'like', $q)
+                        ->orWhere('industry', 'like', $q);
+                });
+            })
+            ->latest()
+            ->paginate(20)
+            ->withQueryString();
 
         return view('admin.crm.companies.index', compact('companies'));
     }

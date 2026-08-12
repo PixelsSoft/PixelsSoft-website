@@ -17,9 +17,23 @@ class LeadAdminController extends Controller
 {
     use ScopesByOwner;
 
-    public function index()
+    public function index(Request $request)
     {
-        $leads = $this->scopeForCurrentUser(Lead::with(['company', 'contact', 'owner']))->latest()->paginate(20);
+        $leads = $this->scopeForCurrentUser(Lead::with(['company', 'contact', 'owner']))
+            ->when($request->filled('q'), function ($query) use ($request) {
+                $q = '%' . $request->string('q') . '%';
+                $query->where(function ($inner) use ($q) {
+                    $inner->where('title', 'like', $q)
+                        ->orWhere('status', 'like', $q)
+                        ->orWhereHas('company', fn ($c) => $c->where('name', 'like', $q))
+                        ->orWhereHas('contact', fn ($c) => $c->where('name', 'like', $q));
+                });
+            })
+            ->when($request->filled('status'), fn ($query) => $query->where('status', $request->string('status')))
+            ->when($request->filled('score'), fn ($query) => $query->where('score', $request->string('score')))
+            ->latest()
+            ->paginate(20)
+            ->withQueryString();
 
         return view('admin.crm.leads.index', compact('leads'));
     }

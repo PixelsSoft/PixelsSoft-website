@@ -108,9 +108,22 @@ class SettingsAdminController extends Controller
         File::put(storage_path('app/public/ads.txt'), $content);
     }
 
-    public function sections()
+    public function sections(Request $request)
     {
-        $sections = PageSection::orderBy('page_key')->orderBy('sort_order')->get();
+        $sections = PageSection::query()
+            ->when($request->filled('q'), function ($query) use ($request) {
+                $q = '%' . $request->string('q') . '%';
+                $query->where(function ($inner) use ($q) {
+                    $inner->where('page_key', 'like', $q)
+                        ->orWhere('section_key', 'like', $q);
+                });
+            })
+            ->when($request->filled('page'), fn ($query) => $query->where('page_key', $request->string('page')))
+            ->orderBy('page_key')
+            ->orderBy('sort_order')
+            ->paginate(30)
+            ->withQueryString();
+
         return view('admin.sections.index', compact('sections'));
     }
 
@@ -129,9 +142,24 @@ class SettingsAdminController extends Controller
         return redirect()->route('admin.sections.index')->with('success', 'Section updated.');
     }
 
-    public function messages()
+    public function messages(\Illuminate\Http\Request $request)
     {
-        $messages = ContactMessage::latest()->paginate(20);
+        $messages = ContactMessage::query()
+            ->when($request->filled('q'), function ($query) use ($request) {
+                $q = '%' . $request->string('q') . '%';
+                $query->where(function ($inner) use ($q) {
+                    $inner->where('name', 'like', $q)
+                        ->orWhere('email', 'like', $q)
+                        ->orWhere('subject', 'like', $q)
+                        ->orWhere('message', 'like', $q);
+                });
+            })
+            ->when($request->input('status') === 'unread', fn ($query) => $query->where('is_read', false))
+            ->when($request->input('status') === 'read', fn ($query) => $query->where('is_read', true))
+            ->latest()
+            ->paginate(20)
+            ->withQueryString();
+
         return view('admin.messages.index', compact('messages'));
     }
 
@@ -139,5 +167,11 @@ class SettingsAdminController extends Controller
     {
         $message->update(['is_read' => true]);
         return back()->with('success', 'Message marked as read.');
+    }
+
+    public function destroyMessage(ContactMessage $message)
+    {
+        $message->delete();
+        return back()->with('success', 'Message deleted.');
     }
 }

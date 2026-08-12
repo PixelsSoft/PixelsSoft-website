@@ -10,6 +10,22 @@
             <a href="{{ route('admin.system.users.create') }}" class="btn btn-primary">+ New User</a>
         @endcan
     </div>
+
+    @include('admin.partials.list-toolbar', [
+        'showSearch' => true,
+        'searchPlaceholder' => 'Search users…',
+        'filters' => [
+            [
+                'name' => 'status',
+                'label' => 'All statuses',
+                'options' => [
+                    'active' => 'Active',
+                    'inactive' => 'Inactive',
+                ],
+            ],
+        ],
+    ])
+
     <div class="table-wrap">
         <table>
             <thead>
@@ -29,13 +45,13 @@
                             <span class="badge {{ $user->status === 'active' ? 'badge-published' : 'badge-unread' }}">{{ $user->status }}</span>
                         </td>
                         <td>{{ $user->last_login_at?->format('M d, Y H:i') ?? '—' }}</td>
-                        <td class="actions">
+                        <td class="table-actions">
                             @can('system.users.edit')
                                 <a href="{{ route('admin.system.users.edit', $user) }}" class="btn btn-sm btn-outline">Edit</a>
                             @endcan
                             @can('system.users.delete')
                                 @if($user->id !== auth()->id())
-                                    <form action="{{ route('admin.system.users.destroy', $user) }}" method="POST" style="display:inline" onsubmit="return confirm('Delete this user?')">
+                                    <form action="{{ route('admin.system.users.destroy', $user) }}" method="POST" onsubmit="return confirm('Delete this user?')">
                                         @csrf @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                                     </form>

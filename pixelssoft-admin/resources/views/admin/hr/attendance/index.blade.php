@@ -46,6 +46,24 @@
             <small style="color:#6b7280">Your records only</small>
         @endcannot
     </div>
+
+    @include('admin.partials.list-toolbar', [
+        'showSearch' => true,
+        'searchPlaceholder' => 'Search attendance…',
+        'filters' => [
+            [
+                'name' => 'status',
+                'label' => 'All statuses',
+                'options' => [
+                    'present' => 'Present',
+                    'absent' => 'Absent',
+                    'late' => 'Late',
+                    'wfh' => 'WFH',
+                ],
+            ],
+        ],
+    ])
+
     <div class="table-wrap">
         <table>
             <thead>

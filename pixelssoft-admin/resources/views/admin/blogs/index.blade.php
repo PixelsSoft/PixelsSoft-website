@@ -18,6 +18,21 @@
 
     </div>
 
+    @include('admin.partials.list-toolbar', [
+        'showSearch' => true,
+        'searchPlaceholder' => 'Search blogs…',
+        'filters' => [
+            [
+                'name' => 'status',
+                'label' => 'All statuses',
+                'options' => [
+                    'published' => 'Published',
+                    'draft' => 'Draft',
+                ],
+            ],
+        ],
+    ])
+
     <div class="table-wrap">
 
         <table>
@@ -58,7 +73,7 @@
 
                                 @csrf @method('DELETE')
 
-                                <button type="submit" class="btn btn-danger">Delete</button>
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
 
                             </form>
 

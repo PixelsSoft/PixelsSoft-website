@@ -11,17 +11,28 @@ use Illuminate\Http\Request;
 
 class LeaveRequestAdminController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $query = LeaveRequest::with(['employee.user', 'leaveType']);
+        $query = LeaveRequest::with(['employee.user', 'leaveType'])
+            ->when($request->filled('q'), function ($q) use ($request) {
+                $term = '%' . $request->string('q') . '%';
+                $q->where(function ($inner) use ($term) {
+                    $inner->where('reason', 'like', $term)
+                        ->orWhere('status', 'like', $term)
+                        ->orWhereHas('leaveType', fn ($t) => $t->where('name', 'like', $term))
+                        ->orWhereHas('employee.user', fn ($u) => $u->where('name', 'like', $term))
+                        ->orWhereHas('employee', fn ($e) => $e->where('employee_code', 'like', $term));
+                });
+            })
+            ->when($request->filled('status'), fn ($q) => $q->where('status', $request->string('status')));
 
         if (auth()->user()->can('hr.leave.approve')) {
-            $requests = $query->latest()->paginate(20);
+            $requests = $query->latest()->paginate(20)->withQueryString();
         } else {
             $employee = Employee::where('user_id', auth()->id())->first();
             $requests = $employee
-                ? $query->where('employee_id', $employee->id)->latest()->paginate(20)
-                : LeaveRequest::whereRaw('1=0')->paginate(20);
+                ? $query->where('employee_id', $employee->id)->latest()->paginate(20)->withQueryString()
+                : LeaveRequest::whereRaw('1=0')->paginate(20)->withQueryString();
         }
 
         return view('admin.hr.leave.index', compact('requests'));

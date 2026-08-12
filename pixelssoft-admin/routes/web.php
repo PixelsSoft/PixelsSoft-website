@@ -40,6 +40,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/messages', [SettingsAdminController::class, 'messages'])->name('messages.index');
     Route::patch('/messages/{message}/read', [SettingsAdminController::class, 'markMessageRead'])->name('messages.read');
+    Route::delete('/messages/{message}', [SettingsAdminController::class, 'destroyMessage'])->name('messages.destroy');
 
     Route::get('/media', [MediaAdminController::class, 'index'])->name('media.index');
     Route::post('/media', [MediaAdminController::class, 'store'])->name('media.store');
