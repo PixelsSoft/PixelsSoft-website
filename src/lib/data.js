@@ -59,13 +59,13 @@ const resolveMediaUrl = (url) => {
 
 
 const toImageAsset = (image) => {
-
   if (!image) return image;
-
+  if (typeof image === "string") {
+    const url = resolveMediaUrl(image);
+    return url ? { asset: { url }, url } : image;
+  }
   const url = resolveMediaUrl(image.url || image.asset?.url);
-
   return url ? { asset: { url }, url } : image;
-
 };
 
 
@@ -133,20 +133,20 @@ export const fetchGoogleSettings = (fallback = {}) =>
 
 
 export const normalizePortfolioItems = (items = []) =>
+  items.map((item) => {
+    const rawCategory = item.filterCategory || item.category || "";
+    const filterCategory = Array.isArray(rawCategory)
+      ? rawCategory.filter(Boolean).join(" ")
+      : String(rawCategory || "");
 
-  items.map((item) => ({
-
-    ...item,
-
-    _id: item._id || item.id,
-
-    title: item.title || item.name,
-
-    filterCategory: item.filterCategory || item.category,
-
-    image: toImageAsset(item.image),
-
-  }));
+    return {
+      ...item,
+      _id: item._id || item.id,
+      title: item.title || item.name,
+      filterCategory,
+      image: toImageAsset(item.image),
+    };
+  });
 
 
 

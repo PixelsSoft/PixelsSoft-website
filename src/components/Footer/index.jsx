@@ -24,7 +24,14 @@ const Footer = ( { noSubBG } ) => {
               {/* <div className="logo"> */}
               {/* <a href="#0"> */}
               <div className="logo">
-                <img src={appData.lightLogo} alt="Pixels Soft logo" />
+                <img
+                  src={appData.lightLogo}
+                  alt="Pixels Soft logo"
+                  width={120}
+                  height={28}
+                  loading="lazy"
+                  decoding="async"
+                />
               </div>
               {/* </a> */}
               {/* </div> */}
@@ -65,8 +72,8 @@ const Footer = ( { noSubBG } ) => {
           </div>
           <div className="col-lg-5 offset-lg-2">
             <div className="subscribe mb-50">
-              <h6 className="custom-font stit simple-btn">Newslatter</h6>
-              <p>Sign up for subscribe out newsletter!</p>
+              <h6 className="custom-font stit simple-btn">Newsletter</h6>
+              <p>Sign up to subscribe to our newsletter!</p>
               <Formik
                 initialValues={{
                   subscribe: "",

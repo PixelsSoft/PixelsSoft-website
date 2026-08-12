@@ -1,0 +1,35 @@
+/* Ensure icon/webfonts don't block text paint (PageSpeed font-display) */
+@font-face {
+  font-family: "Font Awesome 5 Brands";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(../fonts/fa-brands-400.woff2) format("woff2"),
+    url(../fonts/fa-brands-400.woff) format("woff");
+}
+
+@font-face {
+  font-family: "Font Awesome 5 Free";
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url(../fonts/fa-solid-900.woff2) format("woff2"),
+    url(../fonts/fa-solid-900.woff) format("woff");
+}
+
+@font-face {
+  font-family: "Font Awesome 5 Free";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(../fonts/fa-regular-400.woff2) format("woff2"),
+    url(../fonts/fa-regular-400.woff) format("woff");
+}
+
+@font-face {
+  font-family: Pe-icon-7-stroke;
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(../fonts/Pe-icon-7-stroke.woff?d7yf1v) format("woff");
+}

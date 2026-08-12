@@ -39,7 +39,9 @@ const handleFullScreenNavbar = () => {
         }
         window.removeEventListener("scroll", noScroll);
       }
-      Splitting({ target: menuText });
+      if (typeof window !== "undefined" && typeof window.Splitting === "function") {
+        window.Splitting({ target: menuText });
+      }
     });
     document.querySelectorAll(".main-menu a").forEach((item) => {
       item.addEventListener("click", () => {

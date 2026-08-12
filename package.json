@@ -6,7 +6,8 @@
     "build": "next build",
     "export": "next build && next export",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "node scripts/patch-perf.js"
   },
   "dependencies": {
     "@portabletext/react": "^3.0.0",

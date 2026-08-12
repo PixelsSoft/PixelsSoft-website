@@ -6,7 +6,7 @@ const SmallFooter = () => {
       <div className="container">
         <div className="copyrights text-center mt-0">
           <p>
-            Copyright © 2022 PixelsSoft. All rights reserved
+            Copyright © {new Date().getFullYear()} PixelsSoft. All rights reserved
           </p>
         </div>
       </div>

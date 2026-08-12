@@ -48,12 +48,7 @@
 ---------------------------------------------------------------- */
 /* ====================== [ Start Typography  ] ====================== */
 
-@import "/css/bootstrap.min.css";
-@import "/css/animate.css";
-@import "/css/font-awesome.min.css";
-@import "/css/ionicons.min.css";
-@import "/css/pe-icon.min.css";
-@import "/css/font-awesome.min.css";
+/* Vendor CSS is loaded separately via ThemeStyles (avoids render-blocking @import chains). */
 * {
   margin: 0;
   padding: 0;

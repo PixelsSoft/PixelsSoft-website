@@ -1,5 +1,4 @@
 import React from "react";
-import Split from "../Split";
 import Link from "next/link";
 import { fetchServices } from "../../lib/data";
 
@@ -35,20 +34,13 @@ const Services1 = () => {
     <section className="services">
       <div className="container">
         <div className="sec-head custom-font text-center">
-          <h6 className="wow fadeIn" data-wow-delay=".5s">
-            Best Features
-          </h6>
-          <Split>
-            <h3 className="wow words chars splitting" data-splitting>
-              Services.
-            </h3>
-          </Split>
+          <h6>Best Features</h6>
+          <h3>Services.</h3>
           <span className="tbg">Services</span>
         </div>
         <div className="row">
           <div
-            className="col-lg-3 col-md-6 item-box bg-img wow fadeInLeft"
-            data-wow-delay=".3s"
+            className="col-lg-3 col-md-6 item-box bg-img"
             style={{ backgroundImage: "url(/img/1.jpg)" }}
           >
             <h4 className="custom-font">
@@ -63,8 +55,7 @@ const Services1 = () => {
           {services.map((service, index) => (
             <div
               key={service.id || index}
-              className="col-lg-3 col-md-6 item-box wow fadeInLeft"
-              data-wow-delay={`${0.5 + index * 0.2}s`}
+              className="col-lg-3 col-md-6 item-box"
             >
               <span className={`icon ${service.icon || "pe-7s-star"}`}></span>
               <h6 dangerouslySetInnerHTML={{ __html: service.title }} />

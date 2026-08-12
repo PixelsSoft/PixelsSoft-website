@@ -6,32 +6,44 @@ import SEO from "../../components/SEO";
 import DarkTheme from "../../layouts/Dark";
 
 const Contact = () => {
-  const fixedHeader = React.useRef( null );
-  const MainContent = React.useRef( null );
-  const navbarRef = React.useRef( null );
-  React.useEffect( () => {
-    const interval = setInterval( () => {
-      if ( fixedHeader.current && MainContent.current ) {
-        MainContent.current.style.marginTop =
-          fixedHeader.current.offsetHeight + "px";
+  const fixedHeader = React.useRef(null);
+  const MainContent = React.useRef(null);
+  const navbarRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const updateLayout = () => {
+      if (!fixedHeader.current || !MainContent.current) return;
+      if (window.innerWidth <= 991) {
+        MainContent.current.style.marginTop = "0";
+        fixedHeader.current.style.position = "static";
+        return;
       }
-    }, 1000 );
+      fixedHeader.current.style.position = "";
+      MainContent.current.style.marginTop =
+        fixedHeader.current.offsetHeight + "px";
+    };
+
+    updateLayout();
+    const t = window.setTimeout(updateLayout, 300);
+    window.addEventListener("resize", updateLayout);
 
     const navbar = navbarRef.current;
     const onScroll = () => {
       if (!navbar) return;
-      if ( window.pageYOffset > 300 ) {
-        navbar.classList.add( "nav-scroll" );
+      if (window.pageYOffset > 300) {
+        navbar.classList.add("nav-scroll");
       } else {
-        navbar.classList.remove( "nav-scroll" );
+        navbar.classList.remove("nav-scroll");
       }
     };
-    window.addEventListener( "scroll", onScroll );
+    window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
-      clearInterval(interval);
+      window.clearTimeout(t);
+      window.removeEventListener("resize", updateLayout);
       window.removeEventListener("scroll", onScroll);
     };
-  }, [] );
+  }, []);
+
   return (
     <DarkTheme>
       <SEO

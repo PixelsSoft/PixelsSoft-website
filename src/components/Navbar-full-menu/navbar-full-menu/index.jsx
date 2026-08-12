@@ -20,7 +20,13 @@ const NavbarFullMenu = ( { theme, lr } ) => {
           {/* <a href="#0"> */}
           <Link href="/">
             <a className="logo">
-              <img src={appData.lightLogo} alt="logo" />
+              <img
+                src={appData.lightLogo}
+                alt="Pixels Soft logo"
+                width={140}
+                height={32}
+                decoding="async"
+              />
             </a>
           </Link>
           {/* </a> */}

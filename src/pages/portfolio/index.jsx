@@ -7,9 +7,14 @@ import PortfolioTreeColumn from "../../components/Portfolio-custom-column";
 import SEO from "../../components/SEO";
 import client from '../../config/sanity.config';
 import { fetchPortfolios, normalizePortfolioItems } from '../../lib/data';
+import portfolioFallback from '../../data/sections/portfolio1.json';
 
 const Works4Dark = ( { portfolioItems: initialItems = [] } ) => {
-  const [portfolioItems, setPortfolioItems] = React.useState(initialItems);
+  const [portfolioItems, setPortfolioItems] = React.useState(() =>
+    normalizePortfolioItems(
+      initialItems.length ? initialItems : portfolioFallback
+    )
+  );
   const fixedHeader = React.useRef( null );
   const MainContent = React.useRef( null );
   const navbarRef = React.useRef( null );
@@ -17,7 +22,8 @@ const Works4Dark = ( { portfolioItems: initialItems = [] } ) => {
   const [pageLoaded, setPageLoaded] = React.useState( false );
 
   React.useEffect(() => {
-    fetchPortfolios(initialItems).then((data) => {
+    const fallback = initialItems.length ? initialItems : portfolioFallback;
+    fetchPortfolios(fallback).then((data) => {
       setPortfolioItems(normalizePortfolioItems(data));
     });
   }, [initialItems]);
@@ -32,8 +38,10 @@ const Works4Dark = ( { portfolioItems: initialItems = [] } ) => {
       if ( !fixedHeader.current || !MainContent.current ) return;
       if ( window.innerWidth <= 991 ) {
         MainContent.current.style.marginTop = "0";
+        fixedHeader.current.style.position = "static";
         return;
       }
+      fixedHeader.current.style.position = "";
       MainContent.current.style.marginTop =
         fixedHeader.current.offsetHeight + "px";
     };
@@ -53,18 +61,8 @@ const Works4Dark = ( { portfolioItems: initialItems = [] } ) => {
       }
     };
     window.addEventListener( "scroll", onScroll );
-    window.addEventListener( "load", () => {
-      setTimeout( () => {
-        if ( fixedHeader.current ) {
-          var slidHeight = fixedHeader.current.offsetHeight;
-          if ( MainContent.current ) {
-            MainContent.current.style.marginTop = slidHeight + "px";
-          }
-        }
-      }, 0 );
-    } );
     return () => window.removeEventListener("scroll", onScroll);
-  }, [fixedHeader, MainContent, navbarRef] );
+  }, [navbarRef] );
 
   return (
     <DarkTheme>

@@ -1,7 +1,6 @@
 import React from "react";
 import { Formik, Form, Field } from "formik";
 import axios from 'axios';
-import Split from '../Split';
 import { submitContact } from '../../lib/api';
 import { fetchGoogleSettings } from '../../lib/data';
 
@@ -125,22 +124,14 @@ const ContactWithMap = ( { theme = "dark" } ) => {
             <div className="col-lg-5 offset-lg-1">
               <div className="cont-info">
                 <h4 className="extra-title mb-50">Contact Info.</h4>
-                <Split>
-                  <h3 className="custom-font wow" data-splitting>
-                    Let&apos;s Talk.
-                  </h3>
-                </Split>
+                <h3 className="custom-font">Let&apos;s Talk.</h3>
                 <div className="item mb-40">
                   <h5>
-                    <a href="#0">Info@pixelssoft.com</a>
+                    <a href="mailto:Info@pixelssoft.com">Info@pixelssoft.com</a>
                   </h5>
                   <h5>(+1) 386 306 6199</h5>
                 </div>
-                <Split>
-                  <h3 className="custom-font wow" data-splitting>
-                    Visit Us.
-                  </h3>
-                </Split>
+                <h3 className="custom-font">Visit Us.</h3>
                 <div className="con-info custom-font">
                   {/* <div className="item"> */}
                   <li>
@@ -190,7 +181,7 @@ const ContactWithMap = ( { theme = "dark" } ) => {
         <div className="container">
           <div className="copyrights text-center mt-0">
             <p>
-              Copyright © 2022 PixelsSoft. All rights reserved
+              Copyright © {new Date().getFullYear()} PixelsSoft. All rights reserved
             </p>
           </div>
         </div>

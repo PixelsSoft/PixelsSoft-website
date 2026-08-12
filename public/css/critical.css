@@ -1,0 +1,73 @@
+/* Above-the-fold critical styles so vendor CSS can load async without blank paint */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #0c0f16;
+  color: #fff;
+  font-family: Poppins, system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+.navbar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  z-index: 999;
+  min-height: 64px;
+}
+
+.navbar .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+.navbar .logo img {
+  width: auto;
+  max-width: 140px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.slider.fixed-slider,
+.slider .parallax-slider,
+.slider .swiper-slide,
+.slider .bg-img {
+  min-height: 100vh;
+}
+
+.slider .bg-img {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.slider .caption {
+  text-align: center;
+  padding: 0 16px;
+}
+
+.slider .caption h1 {
+  font-size: clamp(1.5rem, 6vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.slider .caption p {
+  color: #eee;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.main-content {
+  background: #0c0f16;
+  position: relative;
+  z-index: 3;
+}

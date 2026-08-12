@@ -1,17 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 import React from "react";
-import Split from '../Split';
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import ModalVideo from "react-modal-video";
 import "react-modal-video/css/modal-video.css";
 
 const VideoWithTestimonials = () => {
-  const [isOpen, setOpen] = React.useState( false );
-  React.useEffect( () => {
-    console.clear();
-  }, [] );
   const settings = {
     dots: true,
     infinite: true,
@@ -31,66 +25,26 @@ const VideoWithTestimonials = () => {
           <div className="row">
             <div className="col-lg-6">
               <div className="vid-area">
-                {/* <div className="vid-icon">
-                  {typeof window !== "undefined" && (
-                    <ModalVideo
-                      channel="vimeo"
-                      autoplay
-                      isOpen={isOpen}
-                      videoId="127203262"
-                      onClose={() => setOpen( false )}
-                    />
-                  )}
-                  <a
-                    className="vid"
-                    onClick={( e ) => {
-                      e.preventDefault();
-                      setOpen( true );
-                    }}
-                    href="https://vimeo.com/127203262"
-                  >
-                    <div className="vid-butn">
-                      <span className="icon">
-                        <i className="fas fa-play"></i>
-                      </span>
-                    </div>
-                  </a>
-                </div> */}
-
                 <div className="cont">
-                  <Split>
-                    <h3 className="wow" data-splitting>
-                      So that&apos;s us. There&apos;s no other way to put it.
-                    </h3>
-                  </Split>
+                  <h3>
+                    So that&apos;s us. There&apos;s no other way to put it.
+                  </h3>
                 </div>
               </div>
             </div>
             <div className="col-lg-5 offset-lg-1">
               <div className="testim-box">
                 <div className="head-box">
-                  <h6 className="wow fadeIn" data-wow-delay=".5s">
-                    Our Happy Clients
-                  </h6>
-                  <h4 className="wow fadeInLeft" data-wow-delay=".5s">
-                    What Client&apos;s Say?
-                  </h4>
+                  <h6>Our Happy Clients</h6>
+                  <h4>What Clients Say?</h4>
                 </div>
-                <Slider
-                  {...settings}
-                  className="slic-item wow fadeInUp"
-                  data-wow-delay=".5s"
-                >
+                <Slider {...settings} className="slic-item">
                   <div className="item">
                     <p>
-                      Will recommend him to everyone. It Was a great experience working with him.
+                      Will recommend him to everyone. It Was a great experience
+                      working with him.
                     </p>
                     <div className="info">
-                      {/* <div className="img">
-                        <div className="img-box">
-                          <img src="/img/clients/1.jpg" alt="" />
-                        </div>
-                      </div> */}
                       <div className="cont">
                         <div className="author">
                           <h6 className="author-name custom-font">
@@ -105,41 +59,29 @@ const VideoWithTestimonials = () => {
                   </div>
                   <div className="item">
                     <p>
-                      Very easy to work with and wrote beautiful code very quickly. Great communication throughout. I would absolutely work with her again.
+                      Very easy to work with and wrote beautiful code very
+                      quickly. Great communication throughout. I would
+                      absolutely work with her again.
                     </p>
                     <div className="info">
-                      {/* <div className="img">
-                        <div className="img-box">
-                          <img src="/img/clients/2.jpg" alt="" />
-                        </div>
-                      </div> */}
                       <div className="cont">
                         <div className="author">
-                          <h6 className="author-name custom-font">
-                            Waqas
-                          </h6>
-                          <span className="author-details">
-                            Director, Jips
-                          </span>
+                          <h6 className="author-name custom-font">Waqas</h6>
+                          <span className="author-details">Director, Jips</span>
                         </div>
                       </div>
                     </div>
                   </div>
                   <div className="item">
                     <p>
-                      Great work. Very flexible. Open to making adjustments and edits. Very friendly. Fast worker, and attentive to the project. Job well done!
+                      Great work. Very flexible. Open to making adjustments and
+                      edits. Very friendly. Fast worker, and attentive to the
+                      project. Job well done!
                     </p>
                     <div className="info">
-                      {/* <div className="img">
-                        <div className="img-box">
-                          <img src="/img/clients/3.jpg" alt="" />
-                        </div>
-                      </div> */}
                       <div className="cont">
                         <div className="author">
-                          <h6 className="author-name custom-font">
-                            Shahid
-                          </h6>
+                          <h6 className="author-name custom-font">Shahid</h6>
                           <span className="author-details">
                             Co-founder, Construction Company
                           </span>

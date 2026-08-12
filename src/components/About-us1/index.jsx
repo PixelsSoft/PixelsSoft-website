@@ -1,6 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
 import React from "react";
-import Split from "../Split";
 import AboutUs1Date from "../../data/sections/about-us1.json";
 
 const AboutUs1 = () => {
@@ -12,16 +11,37 @@ const AboutUs1 = () => {
             <div className="img-mons">
               <div className="row">
                 <div className="col-md-5 cmd-padding valign">
-                  <div className="img1 wow imago" data-wow-delay=".5s">
-                    <img src={AboutUs1Date.image1} alt="" width={500} height={500} />
+                  <div className="img1">
+                    <img
+                      src={AboutUs1Date.image1}
+                      alt="Pixels Soft team"
+                      width={500}
+                      height={500}
+                      loading="lazy"
+                      decoding="async"
+                    />
                   </div>
                 </div>
                 <div className="col-md-7 cmd-padding">
-                  <div className="img2 wow imago" data-wow-delay=".3s">
-                    <img src={AboutUs1Date.image2} alt="" width={500} height={500} />
+                  <div className="img2">
+                    <img
+                      src={AboutUs1Date.image2}
+                      alt="Pixels Soft studio"
+                      width={500}
+                      height={500}
+                      loading="lazy"
+                      decoding="async"
+                    />
                   </div>
-                  <div className="img3 wow imago" data-wow-delay=".8s">
-                    <img src={AboutUs1Date.image3} alt="" width={500} height={500} />
+                  <div className="img3">
+                    <img
+                      src={AboutUs1Date.image3}
+                      alt="Pixels Soft work"
+                      width={500}
+                      height={500}
+                      loading="lazy"
+                      decoding="async"
+                    />
                   </div>
                 </div>
               </div>
@@ -35,26 +55,16 @@ const AboutUs1 = () => {
                 <span></span>
                 <span></span>
               </div>
-              <Split>
-                <h3
-                  className="words chars splitting main-title wow"
-                  data-splitting
-                >
-                  {AboutUs1Date.title.first} <br /> {AboutUs1Date.title.second}
-                </h3>
-              </Split>
-              <Split>
-                <p className="words chars splitting wow txt" data-splitting>
-                  {AboutUs1Date.content}
-                </p>
-              </Split>
+              <h3 className="main-title">
+                {AboutUs1Date.title.first} <br /> {AboutUs1Date.title.second}
+              </h3>
+              <p className="txt">{AboutUs1Date.content}</p>
               <div className="ftbox mt-30">
                 <ul>
-                  {AboutUs1Date.features.map( ( feature ) => (
+                  {AboutUs1Date.features.map((feature) => (
                     <li
                       key={feature.id}
-                      className={`wow fadeIn ${feature.id == 2 ? "space" : ""}`}
-                      data-wow-delay={feature.wowDelay}
+                      className={feature.id == 2 ? "space" : ""}
                     >
                       <span
                         className={`icon color-font pe-7s-${feature.icon}`}
@@ -68,7 +78,7 @@ const AboutUs1 = () => {
                         <span></span>
                       </div>
                     </li>
-                  ) )}
+                  ))}
                 </ul>
               </div>
             </div>

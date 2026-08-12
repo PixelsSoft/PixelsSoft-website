@@ -1,7 +1,6 @@
 import React from "react";
 import CountUp from "react-countup";
 import numbers1Data from "../../data/sections/numbers1.json";
-import Split from "../Split";
 import VisibilitySensor from "react-visibility-sensor";
 
 const Numbers1 = () => {
@@ -26,12 +25,7 @@ const Numbers1 = () => {
                     )}
                   </CountUp>
                 </h3>
-
-                <Split>
-                  <p className="wow txt words chars splitting" data-splitting>
-                    {item.txt}
-                  </p>
-                </Split>
+                <p className="txt">{item.txt}</p>
               </div>
             </div>
           ))}

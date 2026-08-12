@@ -2,7 +2,7 @@ import React from "react";
 import introData from "../../data/sections/intro.json";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Link from "next/link";
-import SwiperCore, { Navigation, Pagination, Parallax, Autoplay } from "swiper";
+import SwiperCore, { Navigation, Pagination, Autoplay } from "swiper";
 
 import "swiper/css";
 import "swiper/css/pagination";
@@ -10,25 +10,28 @@ import "swiper/css/navigation";
 import fadeWhenScroll from "../../common/fadeWhenScroll";
 import removeSlashFromPagination from "../../common/removeSlashFromPagination";
 
-SwiperCore.use( [Navigation, Pagination, Parallax, Autoplay] );
+SwiperCore.use([Navigation, Pagination, Autoplay]);
 
-const IntroWithSlider1 = ( { sliderRef } ) => {
-  const [load, setLoad] = React.useState( true );
+const slideBg = (slide) => {
+  const src = slide.image || slide.imageWebp;
+  return src ? `url(${src})` : undefined;
+};
+
+const IntroWithSlider1 = ({ sliderRef }) => {
+  const [ready, setReady] = React.useState(false);
   const [activeIndex, setActiveIndex] = React.useState(0);
-  const [enableParallax, setEnableParallax] = React.useState(false);
+  const firstSlide = introData[0];
 
-  React.useEffect( () => {
+  const navigationPrevRef = React.useRef(null);
+  const navigationNextRef = React.useRef(null);
+  const paginationRef = React.useRef(null);
+
+  React.useEffect(() => {
     fadeWhenScroll();
-    setEnableParallax( window.innerWidth > 991 );
-    setTimeout( () => {
-      setLoad( false );
-      removeSlashFromPagination();
-    }, 1000 );
-  }, [] );
-
-  const navigationPrevRef = React.useRef( null );
-  const navigationNextRef = React.useRef( null );
-  const paginationRef = React.useRef( null );
+    setReady(true);
+    const t = setTimeout(() => removeSlashFromPagination(), 50);
+    return () => clearTimeout(t);
+  }, []);
 
   return (
     <header
@@ -36,14 +39,47 @@ const IntroWithSlider1 = ( { sliderRef } ) => {
       className="slider slider-prlx fixed-slider text-center"
     >
       <div className="swiper-container parallax-slider">
-        {!load ? (
+        {!ready ? (
+          <div className="swiper-slide">
+            <div
+              className="bg-img valign"
+              style={{ backgroundImage: slideBg(firstSlide) }}
+              data-overlay-dark="6"
+            >
+              <div className="container">
+                <div className="row justify-content-center">
+                  <div className="col-lg-7 col-md-9">
+                    <div className="caption center">
+                      <h1 className="custom-font">
+                        {typeof firstSlide.title === "object" ? (
+                          <>
+                            {firstSlide.title.first} <br />
+                            {firstSlide.title.second}
+                          </>
+                        ) : (
+                          firstSlide.title
+                        )}
+                      </h1>
+                      {firstSlide?.content && <p>{firstSlide.content}</p>}
+                      <Link href="/about/">
+                        <a className="btn-curve btn-lit mt-30">
+                          <span>Look More</span>
+                        </a>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
           <Swiper
-            speed={1000}
+            speed={800}
             autoplay={{
-              delay: 1000,
+              delay: 5000,
               disableOnInteraction: true,
             }}
-            parallax={enableParallax}
+            allowTouchMove
             navigation={{
               prevEl: navigationPrevRef.current,
               nextEl: navigationNextRef.current,
@@ -53,26 +89,16 @@ const IntroWithSlider1 = ( { sliderRef } ) => {
               clickable: true,
               el: paginationRef.current,
             }}
-            onBeforeInit={( swiper ) => {
+            onBeforeInit={(swiper) => {
               swiper.params.navigation.prevEl = navigationPrevRef.current;
               swiper.params.navigation.nextEl = navigationNextRef.current;
               swiper.params.pagination.el = paginationRef.current;
             }}
             onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
-            onSwiper={( swiper ) => {
-              setTimeout( () => {
-                if ( enableParallax ) {
-                  for ( var i = 0; i < swiper.slides.length; i++ ) {
-                    swiper.slides[i].childNodes[0].setAttribute(
-                      "data-swiper-parallax",
-                      0.75 * swiper.width
-                    );
-                  }
-                }
-
+            onSwiper={(swiper) => {
+              setTimeout(() => {
                 swiper.params.navigation.prevEl = navigationPrevRef.current;
                 swiper.params.navigation.nextEl = navigationNextRef.current;
-
                 swiper.params.pagination.el = paginationRef.current;
 
                 swiper.navigation.destroy();
@@ -82,16 +108,16 @@ const IntroWithSlider1 = ( { sliderRef } ) => {
                 swiper.pagination.destroy();
                 swiper.pagination.init();
                 swiper.pagination.update();
-              } );
+              });
             }}
             className="swiper-wrapper"
             slidesPerView={1}
           >
-            {introData.map( ( slide, index ) => (
+            {introData.map((slide, index) => (
               <SwiperSlide key={slide.id} className="swiper-slide">
                 <div
                   className="bg-img valign"
-                  style={{ backgroundImage: `url(${slide.image})` }}
+                  style={{ backgroundImage: slideBg(slide) }}
                   data-overlay-dark="6"
                 >
                   <div className="container">
@@ -99,7 +125,7 @@ const IntroWithSlider1 = ( { sliderRef } ) => {
                       <div className="col-lg-7 col-md-9">
                         <div className="caption center">
                           <h1
-                            className="words chars splitting custom-font"
+                            className="custom-font"
                             aria-hidden={index !== activeIndex}
                           >
                             {typeof slide.title === "object" ? (
@@ -123,9 +149,10 @@ const IntroWithSlider1 = ( { sliderRef } ) => {
                   </div>
                 </div>
               </SwiperSlide>
-            ) )}
+            ))}
           </Swiper>
-        ) : null}
+        )}
+
         <div className="setone setwo">
           <div
             ref={navigationNextRef}
@@ -146,13 +173,28 @@ const IntroWithSlider1 = ( { sliderRef } ) => {
         ></div>
 
         <div className="social-icon">
-          <a href="https://www.facebook.com/profile.php?id=100064333501672" rel="noopener noreferrer" target={"_blank"} className="icon">
+          <a
+            href="https://www.facebook.com/profile.php?id=100064333501672"
+            rel="noopener noreferrer"
+            target="_blank"
+            className="icon"
+          >
             <i className="fab fa-facebook-f"></i>
           </a>
-          <a href="https://www.instagram.com/pixelssoft/" target={"_blank"} rel="noopener noreferrer" className="icon">
+          <a
+            href="https://www.instagram.com/pixelssoft/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="icon"
+          >
             <i className="fab fa-instagram"></i>
           </a>
-          <a href="https://www.linkedin.com/company/pixelssoft/" target={"_blank"} rel="noopener noreferrer" className="icon">
+          <a
+            href="https://www.linkedin.com/company/pixelssoft/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="icon"
+          >
             <i className="fab fa-linkedin"></i>
           </a>
         </div>

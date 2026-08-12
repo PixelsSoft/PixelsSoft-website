@@ -8,7 +8,10 @@ const CookieConsent = ({ onAccept }) => {
 
   React.useEffect(() => {
     const consent = localStorage.getItem(COOKIE_KEY);
-    if (!consent) setVisible(true);
+    if (consent) return;
+    // Delay banner so it doesn't compete with LCP
+    const t = window.setTimeout(() => setVisible(true), 2500);
+    return () => window.clearTimeout(t);
   }, []);
 
   const accept = () => {

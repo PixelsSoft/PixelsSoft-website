@@ -1,21 +1,19 @@
 /* eslint-disable @next/next/no-css-tags */
 import React from "react";
-import Head from "next/head";
+import ThemeStyles from "../components/ThemeStyles";
 
 const LightTheme = ({ children, bdOn }) => {
-  if (bdOn) {
-    React.useEffect(() => {
-      document.querySelector("body").classList.add("bd-dark");
-      return () => {
-        document.querySelector("body").classList.remove("bd-dark");
-      };
-    });
-  }
+  React.useEffect(() => {
+    if (!bdOn) return undefined;
+    document.querySelector("body")?.classList.add("bd-dark");
+    return () => {
+      document.querySelector("body")?.classList.remove("bd-dark");
+    };
+  }, [bdOn]);
+
   return (
     <>
-      <Head>
-        <link rel="stylesheet" href="/css/light.css" />
-      </Head>
+      <ThemeStyles themeHref="/css/light.css" />
       {children}
     </>
   );
