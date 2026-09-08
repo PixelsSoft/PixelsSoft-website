@@ -19,11 +19,11 @@
                 'name' => 'status',
                 'label' => 'All statuses',
                 'options' => [
-                    'draft' => 'Draft',
-                    'sent' => 'Sent',
+                    'unpaid' => 'Unpaid',
+                    'partial' => 'Partial',
                     'paid' => 'Paid',
                     'overdue' => 'Overdue',
-                    'cancelled' => 'Cancelled',
+                    'void' => 'Void',
                 ],
             ],
         ],
@@ -37,7 +37,7 @@
                     <tr>
                         <td><a href="{{ route('admin.accounts.invoices.show', $invoice) }}"><strong>{{ $invoice->number }}</strong></a></td>
                         <td>{{ $invoice->company?->name ?? '—' }}</td>
-                        <td><span class="badge badge-draft">{{ $invoice->status }}</span></td>
+                        <td><span class="badge {{ $invoice->statusBadge() }}">{{ $invoice->displayStatus() }}</span></td>
                         <td>{{ $invoice->issue_date->format('M d, Y') }}</td>
                         <td>{{ $invoice->due_date?->format('M d, Y') ?? '—' }}</td>
                         <td>{{ $invoice->currency }} {{ number_format($invoice->total, 2) }}</td>

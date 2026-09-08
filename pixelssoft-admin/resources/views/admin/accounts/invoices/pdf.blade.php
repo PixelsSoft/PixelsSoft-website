@@ -37,7 +37,7 @@
         <div class="header-right">
             <div class="invoice-title">INVOICE</div>
             <div><strong>{{ $invoice->number }}</strong></div>
-            <div class="status">{{ strtoupper($invoice->status) }}</div>
+            <div class="status">{{ strtoupper($invoice->displayStatus()) }}</div>
         </div>
     </div>
 
@@ -51,8 +51,8 @@
         <div style="display:table-cell;width:50%;vertical-align:top;text-align:right">
             <div class="meta-row"><span class="meta-label">Issue Date</span> {{ $invoice->issue_date->format('M d, Y') }}</div>
             <div class="meta-row"><span class="meta-label">Due Date</span> {{ $invoice->due_date?->format('M d, Y') ?? '—' }}</div>
-            @if($invoice->project)
-                <div class="meta-row"><span class="meta-label">Project</span> {{ $invoice->project->name }}</div>
+            @if($invoice->deal)
+                <div class="meta-row"><span class="meta-label">Deal</span> {{ $invoice->deal->title }}</div>
             @endif
             <div class="meta-row"><span class="meta-label">Currency</span> {{ $invoice->currency }}</div>
             @if($invoice->sourceName())

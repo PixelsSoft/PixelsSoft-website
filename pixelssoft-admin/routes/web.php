@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\ServiceAdminController;
 use App\Http\Controllers\Admin\SettingsAdminController;
 use App\Http\Controllers\Admin\ShowcaseAdminController;
 use App\Http\Controllers\InviteController;
+use App\Http\Controllers\PublicPay\InvoicePayController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn () => redirect()->route('admin.login'));
@@ -18,6 +19,11 @@ Route::post('/login', [AuthController::class, 'login'])->name('admin.login.submi
 
 Route::get('/invite/{token}', [InviteController::class, 'show'])->name('invite.accept');
 Route::post('/invite/{token}', [InviteController::class, 'accept'])->name('invite.accept.submit');
+
+Route::get('/pay/{token}', [InvoicePayController::class, 'show'])->name('public.invoice.pay');
+Route::post('/pay/{token}/intent', [InvoicePayController::class, 'intent'])->name('public.invoice.intent');
+Route::post('/pay/{token}/confirm', [InvoicePayController::class, 'confirm'])->name('public.invoice.confirm');
+Route::post('/stripe/webhook', [InvoicePayController::class, 'webhook'])->name('public.stripe.webhook');
 
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

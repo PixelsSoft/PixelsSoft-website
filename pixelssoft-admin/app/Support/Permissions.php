@@ -23,6 +23,7 @@ class Permissions
             'system.roles.view', 'system.roles.edit',
             'system.invitations.manage',
             'system.activity.view',
+            'system.stripe.manage',
             // CMS
             'cms.blogs.view', 'cms.blogs.create', 'cms.blogs.edit', 'cms.blogs.delete',
             'cms.portfolios.view', 'cms.portfolios.create', 'cms.portfolios.edit', 'cms.portfolios.delete',

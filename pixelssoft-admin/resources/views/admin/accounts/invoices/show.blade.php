@@ -17,17 +17,11 @@
         <div class="invoice-hero-main">
             <div class="invoice-kicker">Invoice</div>
             <h2>{{ $invoice->number }}</h2>
-            <span class="badge {{ $invoice->statusBadge() }}">{{ strtoupper($invoice->status) }}</span>
+            <span class="badge {{ $invoice->statusBadge() }}">{{ strtoupper($invoice->displayStatus()) }}</span>
         </div>
         <div class="invoice-hero-actions">
             @can('accounts.invoices.edit')
                 <a href="{{ route('admin.accounts.invoices.pdf', $invoice) }}" class="btn btn-sm btn-outline">Download PDF</a>
-                @if($invoice->status === 'draft')
-                    <form action="{{ route('admin.accounts.invoices.sent', $invoice) }}" method="POST" style="display:inline">
-                        @csrf @method('PATCH')
-                        <button type="submit" class="btn btn-sm btn-primary">Mark Sent</button>
-                    </form>
-                @endif
                 <a href="{{ route('admin.accounts.invoices.edit', $invoice) }}" class="btn btn-sm btn-outline">Edit</a>
             @endcan
             @can('accounts.invoices.delete')
@@ -39,6 +33,20 @@
         </div>
     </div>
 
+    @if($invoice->publicPayUrl())
+        <div class="card">
+            <div class="card-header"><h2>Shareable payment link</h2></div>
+            <div style="padding:0 24px 24px">
+                <p class="settle-form-lead">Anyone with this link can open the invoice and pay by card. No login required.</p>
+                <div class="share-link-row">
+                    <input type="text" id="invoice-pay-url" value="{{ $invoice->publicPayUrl() }}" readonly>
+                    <button type="button" class="btn btn-sm btn-primary" onclick="navigator.clipboard.writeText(document.getElementById('invoice-pay-url').value); this.textContent='Copied';">Copy link</button>
+                    <a href="{{ $invoice->publicPayUrl() }}" class="btn btn-sm btn-outline" target="_blank" rel="noopener">Open</a>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <div class="card">
         <div class="invoice-meta">
             <div>
@@ -46,10 +54,10 @@
                 <strong>{{ $invoice->company?->name ?? '—' }}</strong>
             </div>
             <div>
-                <span class="invoice-meta-label">Project</span>
+                <span class="invoice-meta-label">Deal</span>
                 <strong>
-                    @if($invoice->project)
-                        <a href="{{ route('admin.pm.projects.show', $invoice->project) }}">{{ $invoice->project->name }}</a>
+                    @if($invoice->deal)
+                        <a href="{{ route('admin.crm.deals.show', $invoice->deal) }}">{{ $invoice->deal->title }}</a>
                     @else
                         —
                     @endif
@@ -84,20 +92,6 @@
                 <span class="invoice-meta-label">Currency</span>
                 <strong>{{ $invoice->currency }}</strong>
             </div>
-            <div>
-                <span class="invoice-meta-label">Deal</span>
-                <strong>
-                    @php
-                        $dealTitle = $invoice->deal?->title ?? $invoice->project?->deal?->title;
-                        $dealModel = $invoice->deal ?? $invoice->project?->deal;
-                    @endphp
-                    @if($dealModel && auth()->user()->can('crm.deals.view'))
-                        <a href="{{ route('admin.crm.deals.show', $dealModel) }}">{{ $dealTitle }}</a>
-                    @else
-                        {{ $dealTitle ?: '—' }}
-                    @endif
-                </strong>
-            </div>
         </div>
     </div>
 
@@ -130,7 +124,7 @@
                         <th>Qty</th>
                         <th>Unit price</th>
                         <th>Amount</th>
-                        @if(auth()->user()->can('accounts.invoices.edit') && $invoice->status === 'draft')
+                        @if(auth()->user()->can('accounts.invoices.edit') && $invoice->isUnpaid())
                             <th></th>
                         @endif
                     </tr>
@@ -142,7 +136,7 @@
                             <td>{{ number_format($item->quantity, 2) }}</td>
                             <td>{{ $invoice->currency }} {{ number_format($item->unit_price, 2) }}</td>
                             <td>{{ $invoice->currency }} {{ number_format($item->amount, 2) }}</td>
-                            @if(auth()->user()->can('accounts.invoices.edit') && $invoice->status === 'draft')
+                            @if(auth()->user()->can('accounts.invoices.edit') && $invoice->isUnpaid())
                                 <td>
                                     <form action="{{ route('admin.accounts.invoices.items.destroy', [$invoice, $item]) }}" method="POST" style="display:inline" onsubmit="return confirm('Remove this line item?')">
                                         @csrf @method('DELETE')
@@ -164,7 +158,7 @@
         </div>
 
         @can('accounts.invoices.edit')
-            @if($invoice->status === 'draft')
+            @if($invoice->isUnpaid())
                 <form method="POST" action="{{ route('admin.accounts.invoices.items.store', $invoice) }}" style="padding:0 24px 24px">
                     @csrf
                     <h3 style="margin:16px 0 12px;font-size:15px">Add Line Item</h3>

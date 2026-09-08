@@ -24,7 +24,14 @@ class InvoiceAdminController extends Controller
                         ->orWhereHas('company', fn ($c) => $c->where('name', 'like', $q));
                 });
             })
-            ->when($request->filled('status'), fn ($query) => $query->where('status', $request->string('status')))
+            ->when($request->filled('status'), function ($query) use ($request) {
+                $status = (string) $request->string('status');
+                if ($status === 'unpaid') {
+                    $query->whereIn('status', ['unpaid', 'sent', 'draft']);
+                } else {
+                    $query->where('status', $status);
+                }
+            })
             ->latest()
             ->paginate(20)
             ->withQueryString();
@@ -34,25 +41,33 @@ class InvoiceAdminController extends Controller
 
     public function create()
     {
-        return view('admin.accounts.invoices.form', [
-            'invoice' => new Invoice(['issue_date' => now(), 'status' => 'draft', 'currency' => 'USD']),
-            'companies' => Company::orderBy('name')->get(),
-            'projects' => Project::orderBy('name')->get(),
-            'deals' => Deal::orderByDesc('created_at')->take(50)->get(),
-        ]);
+        return view('admin.accounts.invoices.form', $this->formData(new Invoice([
+            'issue_date' => now(),
+            'due_date' => now()->addDays(14),
+            'status' => 'unpaid',
+            'currency' => 'USD',
+        ])));
     }
 
     public function store(Request $request)
     {
-        $data = $this->validated($request);
+        $data = $this->validated($request, true);
+        $items = $data['items'];
+        unset($data['items']);
         $data['number'] = Invoice::generateNumber();
-        $invoice = Invoice::create($data);
+        $data['status'] = 'unpaid';
+        $data['tax'] = $data['tax'] ?? 0;
+        $this->applyDealLinks($data);
 
-        return redirect()->route('admin.accounts.invoices.show', $invoice)->with('success', 'Invoice created.');
+        $invoice = Invoice::create($data);
+        $this->syncItems($invoice, $items);
+
+        return redirect()->route('admin.accounts.invoices.show', $invoice)->with('success', 'Unpaid invoice created. Share the payment link.');
     }
 
     public function show(Invoice $invoice)
     {
+        $invoice->ensurePublicToken();
         $invoice->load([
             'company',
             'project.source',
@@ -69,19 +84,26 @@ class InvoiceAdminController extends Controller
 
     public function edit(Invoice $invoice)
     {
-        return view('admin.accounts.invoices.form', [
-            'invoice' => $invoice,
-            'companies' => Company::orderBy('name')->get(),
-            'projects' => Project::orderBy('name')->get(),
-            'deals' => Deal::orderByDesc('created_at')->take(50)->get(),
-        ]);
+        $invoice->load('items');
+
+        return view('admin.accounts.invoices.form', $this->formData($invoice));
     }
 
     public function update(Request $request, Invoice $invoice)
     {
-        $invoice->update($this->validated($request));
+        $data = $this->validated($request, false);
+        $items = $data['items'];
+        unset($data['items']);
+        unset($data['status']);
+        $data['tax'] = $data['tax'] ?? 0;
+        $this->applyDealLinks($data);
 
-        return redirect()->route('admin.accounts.invoices.index')->with('success', 'Invoice updated.');
+        $invoice->update($data);
+        if (!$invoice->isClosed()) {
+            $this->syncItems($invoice, $items);
+        }
+
+        return redirect()->route('admin.accounts.invoices.show', $invoice)->with('success', 'Invoice updated.');
     }
 
     public function destroy(Invoice $invoice)
@@ -146,7 +168,7 @@ class InvoiceAdminController extends Controller
             'number' => Invoice::generateNumber(),
             'company_id' => $data['company_id'] ?? $project->company_id,
             'project_id' => $project->id,
-            'status' => 'draft',
+            'status' => 'unpaid',
             'issue_date' => now(),
             'due_date' => now()->addDays(30),
             'currency' => 'USD',
@@ -176,18 +198,67 @@ class InvoiceAdminController extends Controller
         return back()->with('success', 'Invoice marked as sent.');
     }
 
-    private function validated(Request $request): array
+    private function validated(Request $request, bool $creating): array
     {
         return $request->validate([
             'company_id' => 'nullable|exists:crm_companies,id',
             'project_id' => 'nullable|exists:pm_projects,id',
-            'deal_id' => 'nullable|exists:crm_deals,id',
-            'status' => 'required|in:draft,sent,partial,paid,overdue,void',
+            'deal_id' => ($creating ? 'required' : 'nullable') . '|exists:crm_deals,id',
             'issue_date' => 'required|date',
             'due_date' => 'nullable|date',
             'tax' => 'nullable|numeric|min:0',
             'currency' => 'nullable|string|size:3',
             'notes' => 'nullable|string',
+            'items' => 'required|array|min:1',
+            'items.*.description' => 'required|string|max:255',
+            'items.*.quantity' => 'required|numeric|min:0.01',
+            'items.*.unit_price' => 'required|numeric|min:0',
         ]);
+    }
+
+    private function applyDealLinks(array &$data): void
+    {
+        if (empty($data['deal_id'])) {
+            return;
+        }
+
+        $deal = Deal::with('project')->find($data['deal_id']);
+        if (!$deal) {
+            return;
+        }
+
+        if (empty($data['company_id'])) {
+            $data['company_id'] = $deal->company_id;
+        }
+        if (empty($data['project_id']) && $deal->project) {
+            $data['project_id'] = $deal->project->id;
+        }
+    }
+
+    private function formData(Invoice $invoice): array
+    {
+        return [
+            'invoice' => $invoice,
+            'companies' => Company::orderBy('name')->get(),
+            'deals' => Deal::with(['company', 'project'])->orderByDesc('created_at')->take(100)->get(),
+        ];
+    }
+
+    private function syncItems(Invoice $invoice, array $items): void
+    {
+        $invoice->items()->delete();
+
+        foreach ($items as $item) {
+            $qty = (float) $item['quantity'];
+            $price = (float) $item['unit_price'];
+            $invoice->items()->create([
+                'description' => $item['description'],
+                'quantity' => $qty,
+                'unit_price' => $price,
+                'amount' => round($qty * $price, 2),
+            ]);
+        }
+
+        $invoice->recalculateTotals();
     }
 }

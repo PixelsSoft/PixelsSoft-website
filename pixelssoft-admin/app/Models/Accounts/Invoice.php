@@ -8,6 +8,7 @@ use App\Models\Pm\Project;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class Invoice extends Model
 {
@@ -16,6 +17,7 @@ class Invoice extends Model
     protected $fillable = [
         'number', 'company_id', 'project_id', 'deal_id', 'status',
         'issue_date', 'due_date', 'subtotal', 'tax', 'total', 'currency', 'notes',
+        'public_token',
     ];
 
     protected function casts(): array
@@ -54,6 +56,38 @@ class Invoice extends Model
         return $this->hasMany(Payment::class, 'invoice_id');
     }
 
+    public function stripePayments(): HasMany
+    {
+        return $this->hasMany(StripePayment::class, 'invoice_id');
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (Invoice $invoice) {
+            if (!$invoice->public_token) {
+                $invoice->public_token = Str::random(48);
+            }
+        });
+    }
+
+    public function publicPayUrl(): ?string
+    {
+        if (!$this->public_token) {
+            return null;
+        }
+
+        return route('public.invoice.pay', $this->public_token);
+    }
+
+    public function ensurePublicToken(): string
+    {
+        if (!$this->public_token) {
+            $this->forceFill(['public_token' => Str::random(48)])->save();
+        }
+
+        return $this->public_token;
+    }
+
     public function paidAmount(): float
     {
         return (float) $this->payments->sum('amount');
@@ -62,6 +96,22 @@ class Invoice extends Model
     public function isClosed(): bool
     {
         return in_array($this->status, ['paid', 'void'], true);
+    }
+
+    public function isUnpaid(): bool
+    {
+        return !$this->isClosed() && $this->status !== 'partial';
+    }
+
+    public function displayStatus(): string
+    {
+        return match ($this->status) {
+            'paid' => 'Paid',
+            'partial' => 'Partial',
+            'overdue' => 'Overdue',
+            'void' => 'Void',
+            default => 'Unpaid',
+        };
     }
 
     public function outstanding(): float
@@ -142,7 +192,7 @@ class Invoice extends Model
             'paid' => 'badge-published',
             'partial', 'overdue' => 'badge-unread',
             'void' => 'badge-draft',
-            default => 'badge-draft',
+            default => 'badge-unread',
         };
     }
 

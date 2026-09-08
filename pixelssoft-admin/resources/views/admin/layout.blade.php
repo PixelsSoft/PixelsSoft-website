@@ -241,7 +241,7 @@
             </div>
             @endcan
 
-            @canany(['system.users.view', 'system.roles.view', 'system.invitations.manage', 'system.activity.view'])
+            @canany(['system.users.view', 'system.roles.view', 'system.invitations.manage', 'system.activity.view', 'system.stripe.manage'])
             <div class="nav-group" data-group="system">
                 <button type="button" class="nav-group-toggle" aria-expanded="false">
                     <span>System</span>
@@ -272,6 +272,9 @@
                         Activity Log
                     </a>
                     @endcan
+                    @can('system.stripe.manage')
+                    <a href="{{ route('admin.system.stripe.payments') }}" class="{{ request()->routeIs('admin.system.stripe.payments*') ? 'active' : '' }}">Card payments</a>
+                    @endcan
                 </div>
             </div>
             @endcanany
@@ -295,6 +298,9 @@
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9"/></svg>
                         Google Services
                     </a>
+                    @can('system.stripe.manage')
+                    <a href="{{ route('admin.system.stripe.edit') }}" class="{{ request()->routeIs('admin.system.stripe.edit') ? 'active' : '' }}">Stripe</a>
+                    @endcan
                 </div>
             </div>
             @endcan

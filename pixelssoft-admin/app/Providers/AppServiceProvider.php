@@ -34,7 +34,7 @@ class AppServiceProvider extends ServiceProvider
         Route::bind('commission', fn ($value) => SalesCommission::findOrFail($value));
         Route::bind('member', fn ($value) => ProjectMember::findOrFail($value));
         Route::bind('milestone', fn ($value) => Milestone::findOrFail($value));
-        Route::bind('notification', fn ($value) => DatabaseNotification::findOrFail($value));
+        Route::bind('stripePayment', fn ($value) => \App\Models\Accounts\StripePayment::findOrFail($value));
 
         Paginator::defaultView('vendor.pagination.admin');
 

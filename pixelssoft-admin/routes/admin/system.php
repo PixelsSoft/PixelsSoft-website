@@ -4,6 +4,8 @@ use App\Http\Controllers\Admin\System\ActivityLogController;
 use App\Http\Controllers\Admin\System\InvitationAdminController;
 use App\Http\Controllers\Admin\System\ProfileAdminController;
 use App\Http\Controllers\Admin\System\RoleAdminController;
+use App\Http\Controllers\Admin\System\StripePaymentAdminController;
+use App\Http\Controllers\Admin\System\StripeSettingsAdminController;
 use App\Http\Controllers\Admin\System\UserAdminController;
 use Illuminate\Support\Facades\Route;
 
@@ -41,5 +43,12 @@ Route::prefix('system')->name('system.')->group(function () {
     Route::middleware('permission:system.activity.view')->group(function () {
         Route::get('/activity', [ActivityLogController::class, 'index'])->name('activity.index');
         Route::get('/activity/export', [ActivityLogController::class, 'export'])->name('activity.export');
+    });
+
+    Route::middleware('permission:system.stripe.manage')->group(function () {
+        Route::get('/stripe', [StripeSettingsAdminController::class, 'edit'])->name('stripe.edit');
+        Route::post('/stripe', [StripeSettingsAdminController::class, 'update'])->name('stripe.update');
+        Route::get('/stripe/payments', [StripePaymentAdminController::class, 'index'])->name('stripe.payments');
+        Route::get('/stripe/payments/{stripePayment}', [StripePaymentAdminController::class, 'show'])->name('stripe.payments.show');
     });
 });
