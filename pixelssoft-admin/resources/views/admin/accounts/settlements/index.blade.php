@@ -3,36 +3,48 @@
 @section('title', 'Pending payments')
 
 @section('content')
-<div class="card">
-    <div class="card-header">
-        <h2>Pending payments</h2>
-        <span class="badge badge-unread">{{ $milestones->count() }} waiting</span>
+<div class="page-header">
+    <div class="page-header-main">
+        <div class="page-kicker">Accounts</div>
+        <h1>Pending payments</h1>
+        <div class="page-header-meta">
+            <span class="badge badge-unread">{{ $milestones->count() }} waiting</span>
+        </div>
     </div>
-    <div class="page-help">
-        <p>Portal commission is already deducted. Record the wallet and confirm the expected net (or the slightly lower amount after a processor cut).</p>
-    </div>
+</div>
 
-    @forelse($milestones as $milestone)
-        <div class="settlement-block">
-            <div class="settlement-block-head">
+<div class="card" style="margin-bottom:12px">
+    <p class="settle-form-lead" style="margin:0">Portal commission is already deducted. Open a row to record the wallet and confirm the net that landed.</p>
+</div>
+
+@forelse($milestones as $milestone)
+    <details class="settle-expand">
+        <summary>
+            <div class="settlement-block-head" style="width:100%;margin:0">
                 <div>
                     <strong>{{ $milestone->title }}</strong>
                     <div class="form-meta">
                         <a href="{{ route('admin.pm.projects.show', $milestone->project) }}">{{ $milestone->project?->code }} · {{ $milestone->project?->name }}</a>
                         · {{ $milestone->project?->source?->name ?? 'No source' }}
                         @if((float) ($milestone->project?->platform_commission_percent ?? 0) > 0)
-                            · {{ rtrim(rtrim(number_format((float) $milestone->project->platform_commission_percent, 2), '0'), '.') }}% portal fee
+                            · {{ rtrim(rtrim(number_format((float) $milestone->project->platform_commission_percent, 2), '0'), '.') }}% portal
                         @endif
-                        · Released {{ $milestone->released_at?->format('M d, Y H:i') }} by {{ $milestone->releasedBy?->name ?? '—' }}
+                        · {{ $milestone->billing_currency ?: ($milestone->project?->currency ?: 'USD') }} {{ number_format((float) $milestone->net_amount, 2) }} expected
                     </div>
                 </div>
+                <span class="btn btn-sm btn-outline">Settle</span>
             </div>
+        </summary>
+        <div class="settle-expand-body">
             @include('admin.accounts.partials.settle-form', ['milestone' => $milestone, 'paymentAccounts' => $paymentAccounts])
         </div>
-    @empty
+    </details>
+@empty
+    <div class="card">
         <p class="empty-state">Nothing waiting. When sales releases a milestone, it will show up here.</p>
-    @endforelse
-</div>
+    </div>
+@endforelse
+
 <script>
 (function () {
     document.querySelectorAll('.settle-form').forEach(function (form) {

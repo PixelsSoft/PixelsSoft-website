@@ -11,17 +11,23 @@
     $fees = $invoice->displayedFees();
     $outstanding = $invoice->outstanding();
     $receivedDisplay = $invoice->payments->sum('amount');
+    $canEditItems = auth()->user()->can('accounts.invoices.edit') && $invoice->isUnpaid();
+    $canRecordPayment = auth()->user()->can('accounts.payments.create') && ! $invoice->isClosed();
 @endphp
-<div class="invoice-sheet">
-    <div class="card invoice-hero">
-        <div class="invoice-hero-main">
-            <div class="invoice-kicker">Invoice</div>
-            <h2>{{ $invoice->number }}</h2>
-            <span class="badge {{ $invoice->statusBadge() }}">{{ strtoupper($invoice->displayStatus()) }}</span>
+
+<div class="invoice-sheet" data-ui-tabs>
+    <div class="page-header">
+        <div class="page-header-main">
+            <div class="page-kicker">Invoice</div>
+            <h1>{{ $invoice->number }}</h1>
+            <div class="page-header-meta">
+                <span class="badge {{ $invoice->statusBadge() }}">{{ $invoice->displayStatus() }}</span>
+                <span class="form-meta">{{ $invoice->currency }} · Due {{ $invoice->due_date?->format('M d, Y') ?? '—' }}</span>
+            </div>
         </div>
-        <div class="invoice-hero-actions">
+        <div class="page-header-actions">
             @can('accounts.invoices.edit')
-                <a href="{{ route('admin.accounts.invoices.pdf', $invoice) }}" class="btn btn-sm btn-outline">Download PDF</a>
+                <a href="{{ route('admin.accounts.invoices.pdf', $invoice) }}" class="btn btn-sm btn-outline">PDF</a>
                 <a href="{{ route('admin.accounts.invoices.edit', $invoice) }}" class="btn btn-sm btn-outline">Edit</a>
             @endcan
             @can('accounts.invoices.delete')
@@ -33,79 +39,17 @@
         </div>
     </div>
 
-    @if($invoice->publicPayUrl())
-        <div class="card">
-            <div class="card-header"><h2>Shareable payment link</h2></div>
-            <div style="padding:0 24px 24px">
-                <p class="settle-form-lead">Anyone with this link can open the invoice and pay by card. No login required.</p>
-                <div class="share-link-row">
-                    <input type="text" id="invoice-pay-url" value="{{ $invoice->publicPayUrl() }}" readonly>
-                    <button type="button" class="btn btn-sm btn-primary" onclick="navigator.clipboard.writeText(document.getElementById('invoice-pay-url').value); this.textContent='Copied';">Copy link</button>
-                    <a href="{{ $invoice->publicPayUrl() }}" class="btn btn-sm btn-outline" target="_blank" rel="noopener">Open</a>
-                </div>
-            </div>
-        </div>
-    @endif
-
-    <div class="card">
-        <div class="invoice-meta">
-            <div>
-                <span class="invoice-meta-label">Company</span>
-                <strong>{{ $invoice->company?->name ?? '—' }}</strong>
-            </div>
-            <div>
-                <span class="invoice-meta-label">Deal</span>
-                <strong>
-                    @if($invoice->deal)
-                        <a href="{{ route('admin.crm.deals.show', $invoice->deal) }}">{{ $invoice->deal->title }}</a>
-                    @else
-                        —
-                    @endif
-                </strong>
-            </div>
-            <div>
-                <span class="invoice-meta-label">Source</span>
-                <strong>{{ $sourceName ?: '—' }}</strong>
-            </div>
-            <div>
-                <span class="invoice-meta-label">Portal / job URL</span>
-                <strong>
-                    @if($portalUrl)
-                        <a href="{{ $portalUrl }}" target="_blank" rel="noopener" class="invoice-url">Open job</a>
-                    @else
-                        —
-                    @endif
-                </strong>
-                @if($portalId)
-                    <div class="form-meta">ID {{ $portalId }}</div>
-                @endif
-            </div>
-            <div>
-                <span class="invoice-meta-label">Issue date</span>
-                <strong>{{ $invoice->issue_date->format('M d, Y') }}</strong>
-            </div>
-            <div>
-                <span class="invoice-meta-label">Due date</span>
-                <strong>{{ $invoice->due_date?->format('M d, Y') ?? '—' }}</strong>
-            </div>
-            <div>
-                <span class="invoice-meta-label">Currency</span>
-                <strong>{{ $invoice->currency }}</strong>
-            </div>
-        </div>
-    </div>
-
-    <div class="stats-grid">
+    <div class="stats-grid stats-grid-sm">
         <div class="stat-card">
-            <div class="stat-label">Released / client</div>
+            <div class="stat-label">Client amount</div>
             <div class="stat-value">{{ $invoice->currency }} {{ number_format($clientAmount, 0) }}</div>
         </div>
         <div class="stat-card">
-            <div class="stat-label">Platform + processor fees</div>
+            <div class="stat-label">Fees</div>
             <div class="stat-value">{{ $invoice->currency }} {{ number_format($fees, 0) }}</div>
         </div>
         <div class="stat-card">
-            <div class="stat-label">Received in wallet</div>
+            <div class="stat-label">Received</div>
             <div class="stat-value">{{ $invoice->currency }} {{ number_format($invoice->isClosed() ? ($clientAmount - $fees) : $receivedDisplay, 0) }}</div>
         </div>
         <div class="stat-card">
@@ -114,116 +58,195 @@
         </div>
     </div>
 
-    <div class="card">
-        <div class="card-header"><h2>Line items</h2></div>
-        <div class="table-wrap">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Description</th>
-                        <th>Qty</th>
-                        <th>Unit price</th>
-                        <th>Amount</th>
-                        @if(auth()->user()->can('accounts.invoices.edit') && $invoice->isUnpaid())
-                            <th></th>
-                        @endif
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($invoice->items as $item)
-                        <tr class="{{ (float) $item->amount < 0 ? 'line-deduction' : '' }}">
-                            <td>{{ $item->description }}</td>
-                            <td>{{ number_format($item->quantity, 2) }}</td>
-                            <td>{{ $invoice->currency }} {{ number_format($item->unit_price, 2) }}</td>
-                            <td>{{ $invoice->currency }} {{ number_format($item->amount, 2) }}</td>
-                            @if(auth()->user()->can('accounts.invoices.edit') && $invoice->isUnpaid())
-                                <td>
-                                    <form action="{{ route('admin.accounts.invoices.items.destroy', [$invoice, $item]) }}" method="POST" style="display:inline" onsubmit="return confirm('Remove this line item?')">
-                                        @csrf @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline">Remove</button>
-                                    </form>
-                                </td>
-                            @endif
-                        </tr>
-                    @empty
-                        <tr><td colspan="4" class="empty-state">No line items yet.</td></tr>
-                    @endforelse
-                </tbody>
-                <tfoot>
-                    <tr><td colspan="3" style="text-align:right">Client amount</td><td>{{ $invoice->currency }} {{ number_format($clientAmount, 2) }}</td></tr>
-                    <tr><td colspan="3" style="text-align:right">Fees (platform / processor)</td><td class="line-deduction">{{ $invoice->currency }} {{ number_format($fees, 2) }}</td></tr>
-                    <tr><td colspan="3" style="text-align:right"><strong>Received / total</strong></td><td><strong>{{ $invoice->currency }} {{ number_format($invoice->isClosed() ? ($clientAmount - $fees) : $invoice->total, 2) }}</strong></td></tr>
-                </tfoot>
-            </table>
-        </div>
+    <div class="ui-tabs" role="tablist">
+        <button type="button" class="ui-tab is-active" data-tab="overview" role="tab">Overview</button>
+        <button type="button" class="ui-tab" data-tab="items" role="tab">Items ({{ $invoice->items->count() }})</button>
+        <button type="button" class="ui-tab" data-tab="payments" role="tab">Payments ({{ $invoice->payments->count() }})</button>
+        @if($invoice->publicPayUrl())
+            <button type="button" class="ui-tab" data-tab="share" role="tab">Share</button>
+        @endif
+    </div>
 
-        @can('accounts.invoices.edit')
-            @if($invoice->isUnpaid())
-                <form method="POST" action="{{ route('admin.accounts.invoices.items.store', $invoice) }}" style="padding:0 24px 24px">
+    <div class="ui-tab-panel is-active" data-panel="overview">
+        <div class="card">
+            <div class="card-header"><h2>Details</h2></div>
+            <div class="dl-grid">
+                <div>
+                    <span class="dl-label">Company</span>
+                    <div class="dl-value">{{ $invoice->company?->name ?? '—' }}</div>
+                </div>
+                <div>
+                    <span class="dl-label">Deal</span>
+                    <div class="dl-value">
+                        @if($invoice->deal)
+                            <a href="{{ route('admin.crm.deals.show', $invoice->deal) }}">{{ $invoice->deal->title }}</a>
+                        @else
+                            —
+                        @endif
+                    </div>
+                </div>
+                <div>
+                    <span class="dl-label">Source</span>
+                    <div class="dl-value">{{ $sourceName ?: '—' }}</div>
+                </div>
+                <div>
+                    <span class="dl-label">Portal / job</span>
+                    <div class="dl-value">
+                        @if($portalUrl)
+                            <a href="{{ $portalUrl }}" target="_blank" rel="noopener" class="invoice-url">Open job</a>
+                        @else
+                            —
+                        @endif
+                        @if($portalId)
+                            <div class="form-meta">ID {{ $portalId }}</div>
+                        @endif
+                    </div>
+                </div>
+                <div>
+                    <span class="dl-label">Issue date</span>
+                    <div class="dl-value">{{ $invoice->issue_date->format('M d, Y') }}</div>
+                </div>
+                <div>
+                    <span class="dl-label">Due date</span>
+                    <div class="dl-value">{{ $invoice->due_date?->format('M d, Y') ?? '—' }}</div>
+                </div>
+                <div>
+                    <span class="dl-label">Currency</span>
+                    <div class="dl-value">{{ $invoice->currency }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ui-tab-panel" data-panel="items">
+        <div class="table-card">
+            <div class="card-header"><h2>Line items</h2></div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th class="text-right">Qty</th>
+                            <th class="text-right">Unit price</th>
+                            <th class="text-right">Amount</th>
+                            @if($canEditItems)<th></th>@endif
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($invoice->items as $item)
+                            <tr class="{{ (float) $item->amount < 0 ? 'line-deduction' : '' }}">
+                                <td>{{ $item->description }}</td>
+                                <td class="text-right num">{{ number_format($item->quantity, 2) }}</td>
+                                <td class="text-right num">{{ $invoice->currency }} {{ number_format($item->unit_price, 2) }}</td>
+                                <td class="text-right num">{{ $invoice->currency }} {{ number_format($item->amount, 2) }}</td>
+                                @if($canEditItems)
+                                    <td>
+                                        <form action="{{ route('admin.accounts.invoices.items.destroy', [$invoice, $item]) }}" method="POST" style="display:inline" onsubmit="return confirm('Remove this line item?')">
+                                            @csrf @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-outline">Remove</button>
+                                        </form>
+                                    </td>
+                                @endif
+                            </tr>
+                        @empty
+                            <tr><td colspan="{{ $canEditItems ? 5 : 4 }}" class="empty-state">No line items yet.</td></tr>
+                        @endforelse
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-right">Client amount</td>
+                            <td class="text-right num">{{ $invoice->currency }} {{ number_format($clientAmount, 2) }}</td>
+                            @if($canEditItems)<td></td>@endif
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="text-right">Fees</td>
+                            <td class="text-right num line-deduction">{{ $invoice->currency }} {{ number_format($fees, 2) }}</td>
+                            @if($canEditItems)<td></td>@endif
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="text-right"><strong>Total</strong></td>
+                            <td class="text-right num"><strong>{{ $invoice->currency }} {{ number_format($invoice->isClosed() ? ($clientAmount - $fees) : $invoice->total, 2) }}</strong></td>
+                            @if($canEditItems)<td></td>@endif
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            @if($canEditItems)
+                <form method="POST" action="{{ route('admin.accounts.invoices.items.store', $invoice) }}" class="inline-form form-narrow">
                     @csrf
-                    <h3 style="margin:16px 0 12px;font-size:15px">Add Line Item</h3>
+                    <h3>Add line item</h3>
                     <div class="form-grid">
                         <div class="form-group"><label>Description *</label><input type="text" name="description" required></div>
                         <div class="form-group"><label>Quantity *</label><input type="number" step="0.01" min="0.01" name="quantity" value="1" required></div>
-                        <div class="form-group"><label>Unit Price *</label><input type="number" step="0.01" min="0" name="unit_price" required></div>
+                        <div class="form-group"><label>Unit price *</label><input type="number" step="0.01" min="0" name="unit_price" required></div>
                     </div>
                     <div class="form-actions" style="margin-top:12px;padding-top:0;border-top:none">
-                        <button type="submit" class="btn btn-primary">Add Item</button>
+                        <button type="submit" class="btn btn-accent">Add item</button>
                     </div>
                 </form>
             @endif
-        @endcan
+        </div>
     </div>
 
-    <div class="card">
-        <div class="card-header"><h2>Wallet receipts ({{ $invoice->payments->count() }})</h2></div>
-        <div class="page-help">
-            <p>The amount recorded here is what actually landed. Platform and Wise/Payoneer cuts are fees, not a client balance.</p>
-        </div>
-        <div class="table-wrap">
-            <table>
-                <thead><tr><th>Date</th><th>Amount received</th><th>Wallet</th><th>Method</th><th>Reference</th></tr></thead>
-                <tbody>
-                    @forelse($invoice->payments as $payment)
+    <div class="ui-tab-panel" data-panel="payments">
+        <div class="table-card">
+            <div class="card-header"><h2>Wallet receipts</h2></div>
+            <div class="page-help">
+                <p>Amount that actually landed. Platform and processor cuts are fees, not client balance.</p>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
                         <tr>
-                            <td>{{ $payment->paid_at->format('M d, Y H:i') }}</td>
-                            <td>{{ $payment->currency ?: $invoice->currency }} {{ number_format($payment->amount, 2) }}</td>
-                            <td>
-                                @if($payment->paymentAccount && auth()->user()->can('accounts.ledger.view'))
-                                    <a href="{{ route('admin.accounts.ledger.show', $payment->paymentAccount) }}">{{ $payment->paymentAccount->name }}</a>
-                                @elseif($payment->paymentAccount)
-                                    {{ $payment->paymentAccount->name }}
-                                @else
-                                    —
-                                @endif
-                            </td>
-                            <td>{{ str_replace('_', ' ', $payment->method) }}</td>
-                            <td>{{ $payment->reference ?? '—' }}</td>
+                            <th>Date</th>
+                            <th class="text-right">Received</th>
+                            <th>Wallet</th>
+                            <th>Method</th>
+                            <th>Reference</th>
                         </tr>
-                    @empty
-                        <tr><td colspan="5" class="empty-state">No payments recorded.</td></tr>
-                    @endforelse
-                </tbody>
-                @if($invoice->payments->count())
-                    <tfoot>
-                        <tr>
-                            <td style="text-align:right"><strong>Balance due</strong></td>
-                            <td colspan="4"><strong>{{ $invoice->currency }} {{ number_format($outstanding, 2) }}</strong></td>
-                        </tr>
-                    </tfoot>
-                @endif
-            </table>
-        </div>
+                    </thead>
+                    <tbody>
+                        @forelse($invoice->payments as $payment)
+                            <tr>
+                                <td>{{ $payment->paid_at->format('M d, Y H:i') }}</td>
+                                <td class="text-right num">{{ $payment->currency ?: $invoice->currency }} {{ number_format($payment->amount, 2) }}</td>
+                                <td>
+                                    @if($payment->paymentAccount && auth()->user()->can('accounts.ledger.view'))
+                                        <a href="{{ route('admin.accounts.ledger.show', $payment->paymentAccount) }}">{{ $payment->paymentAccount->name }}</a>
+                                    @elseif($payment->paymentAccount)
+                                        {{ $payment->paymentAccount->name }}
+                                    @else
+                                        —
+                                    @endif
+                                </td>
+                                <td>{{ str_replace('_', ' ', $payment->method) }}</td>
+                                <td>{{ $payment->reference ?? '—' }}</td>
+                            </tr>
+                        @empty
+                            <tr><td colspan="5" class="empty-state">No payments recorded.</td></tr>
+                        @endforelse
+                    </tbody>
+                    @if($invoice->payments->count())
+                        <tfoot>
+                            <tr>
+                                <td class="text-right"><strong>Balance due</strong></td>
+                                <td class="text-right num" colspan="4"><strong>{{ $invoice->currency }} {{ number_format($outstanding, 2) }}</strong></td>
+                            </tr>
+                        </tfoot>
+                    @endif
+                </table>
+            </div>
 
-        @if(auth()->user()->can('accounts.payments.create') && ! $invoice->isClosed())
-                <form method="POST" action="{{ route('admin.accounts.payments.store', $invoice) }}" style="padding:0 24px 24px">
+            @if($canRecordPayment)
+                <form method="POST" action="{{ route('admin.accounts.payments.store', $invoice) }}" class="inline-form form-narrow">
                     @csrf
-                    <h3 style="margin:16px 0 12px;font-size:15px">Record Payment</h3>
+                    <h3>Record payment</h3>
                     <div class="form-grid">
                         <div class="form-group">
                             <label>Amount *</label>
                             <input type="number" step="0.01" min="0.01" max="{{ number_format($outstanding, 2, '.', '') }}" name="amount" value="{{ number_format($outstanding, 2, '.', '') }}" required>
-                            <span class="settle-amount-hint">Cannot exceed balance due {{ $invoice->currency }} {{ number_format($outstanding, 2) }}</span>
+                            <span class="settle-amount-hint">Max {{ $invoice->currency }} {{ number_format($outstanding, 2) }}</span>
                         </div>
                         <div class="form-group">
                             <label>Method *</label>
@@ -234,7 +257,7 @@
                             </select>
                         </div>
                         <div class="form-group"><label>Reference</label><input type="text" name="reference" maxlength="100"></div>
-                        <div class="form-group"><label>Paid At *</label><input type="datetime-local" name="paid_at" value="{{ now()->format('Y-m-d\\TH:i') }}" required></div>
+                        <div class="form-group"><label>Paid at *</label><input type="datetime-local" name="paid_at" value="{{ now()->format('Y-m-d\\TH:i') }}" required></div>
                         <div class="form-group">
                             <label>Wallet</label>
                             <select name="payment_account_id">
@@ -246,10 +269,25 @@
                         </div>
                     </div>
                     <div class="form-actions" style="margin-top:12px;padding-top:0;border-top:none">
-                        <button type="submit" class="btn btn-primary">Record Payment</button>
+                        <button type="submit" class="btn btn-accent">Record payment</button>
                     </div>
                 </form>
-        @endif
+            @endif
+        </div>
     </div>
+
+    @if($invoice->publicPayUrl())
+        <div class="ui-tab-panel" data-panel="share">
+            <div class="card form-narrow">
+                <div class="card-header"><h2>Shareable payment link</h2></div>
+                <p class="settle-form-lead">Anyone with this link can open the invoice and pay by card. No login required.</p>
+                <div class="share-link-row">
+                    <input type="text" id="invoice-pay-url" value="{{ $invoice->publicPayUrl() }}" readonly>
+                    <button type="button" class="btn btn-sm btn-accent" onclick="navigator.clipboard.writeText(document.getElementById('invoice-pay-url').value); this.textContent='Copied'">Copy</button>
+                    <a href="{{ $invoice->publicPayUrl() }}" class="btn btn-sm btn-outline" target="_blank" rel="noopener">Open</a>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>
 @endsection
