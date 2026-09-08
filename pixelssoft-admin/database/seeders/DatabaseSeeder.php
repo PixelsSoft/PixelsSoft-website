@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
         $this->call(RolesAndPermissionsSeeder::class);
         $this->call(CrmSeeder::class);
         $this->call(AccountsSeeder::class);
+        $this->call(AgencyFinanceSeeder::class);
         $this->call(HrSeeder::class);
         $this->call(MigrateContactMessagesToLeadsSeeder::class);
 

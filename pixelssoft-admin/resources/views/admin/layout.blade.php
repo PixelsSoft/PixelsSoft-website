@@ -6,7 +6,7 @@
     <title>@yield('title', 'Admin') — PixelsSoft</title>
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
     <link rel="apple-touch-icon" href="{{ asset('favicon.png') }}">
-    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}?v={{ filemtime(public_path('css/admin.css')) }}">
 </head>
 <body>
 <div class="admin-layout">
@@ -54,10 +54,11 @@
                     </a>
                     @endcan
                     @can('crm.deals.view')
-                    <a href="{{ route('admin.crm.deals.kanban') }}" class="{{ request()->routeIs('admin.crm.deals.*') ? 'active' : '' }}">
+                    <a href="{{ route('admin.crm.deals.kanban') }}" class="{{ request()->routeIs('admin.crm.deals.kanban', 'admin.crm.deals.create', 'admin.crm.deals.edit', 'admin.crm.deals.index') ? 'active' : '' }}">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 0v10"/></svg>
                         Deal Pipeline
                     </a>
+                    <a href="{{ route('admin.crm.milestones.index') }}" class="{{ request()->routeIs('admin.crm.milestones.*', 'admin.crm.deals.show') ? 'active' : '' }}">Milestones</a>
                     @endcan
                     @can('crm.companies.view')
                     <a href="{{ route('admin.crm.companies.index') }}" class="{{ request()->routeIs('admin.crm.companies.*') ? 'active' : '' }}">
@@ -74,18 +75,23 @@
                     @can('crm.reports.view')
                     <a href="{{ route('admin.crm.reports.index') }}" class="{{ request()->routeIs('admin.crm.reports.*') ? 'active' : '' }}">CRM Reports</a>
                     @endcan
+                    @can('crm.sources.manage')
+                    <a href="{{ route('admin.crm.sources.index') }}" class="{{ request()->routeIs('admin.crm.sources.*') ? 'active' : '' }}">Lead Sources</a>
+                    @endcan
                 </div>
             </div>
             @endcan
 
-            @can('pm.dashboard.view')
+            @canany(['pm.dashboard.view', 'pm.projects.view'])
             <div class="nav-group" data-group="pm">
                 <button type="button" class="nav-group-toggle" aria-expanded="false">
                     <span>Projects</span>
                     <svg class="nav-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
                 <div class="nav-group-body">
+                    @can('pm.dashboard.view')
                     <a href="{{ route('admin.pm.dashboard') }}" class="{{ request()->routeIs('admin.pm.dashboard') ? 'active' : '' }}">PM Dashboard</a>
+                    @endcan
                     @can('pm.projects.view')
                     <a href="{{ route('admin.pm.projects.index') }}" class="{{ request()->routeIs('admin.pm.projects.*') ? 'active' : '' }}">Projects</a>
                     @endcan
@@ -97,21 +103,35 @@
                     @endcan
                 </div>
             </div>
-            @endcan
+            @endcanany
 
-            @can('accounts.dashboard.view')
+            @canany(['accounts.dashboard.view', 'accounts.invoices.view', 'accounts.payments.view', 'accounts.settlements.manage', 'accounts.ledger.view', 'accounts.commissions.view', 'accounts.payment-accounts.manage', 'accounts.expenses.view-own', 'accounts.expenses.view-all', 'accounts.reports.view'])
             <div class="nav-group" data-group="accounts">
                 <button type="button" class="nav-group-toggle" aria-expanded="false">
                     <span>Accounts</span>
                     <svg class="nav-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
                 <div class="nav-group-body">
+                    @can('accounts.dashboard.view')
                     <a href="{{ route('admin.accounts.dashboard') }}" class="{{ request()->routeIs('admin.accounts.dashboard') ? 'active' : '' }}">Finance Dashboard</a>
+                    @endcan
                     @can('accounts.invoices.view')
                     <a href="{{ route('admin.accounts.invoices.index') }}" class="{{ request()->routeIs('admin.accounts.invoices.*') ? 'active' : '' }}">Invoices</a>
                     @endcan
                     @can('accounts.payments.view')
                     <a href="{{ route('admin.accounts.payments.index') }}" class="{{ request()->routeIs('admin.accounts.payments.*') ? 'active' : '' }}">Payments</a>
+                    @endcan
+                    @can('accounts.settlements.manage')
+                    <a href="{{ route('admin.accounts.settlements.index') }}" class="{{ request()->routeIs('admin.accounts.settlements.*') ? 'active' : '' }}">Pending payments</a>
+                    @endcan
+                    @can('accounts.ledger.view')
+                    <a href="{{ route('admin.accounts.ledger.index') }}" class="{{ request()->routeIs('admin.accounts.ledger.*') ? 'active' : '' }}">Ledger</a>
+                    @endcan
+                    @can('accounts.commissions.view')
+                    <a href="{{ route('admin.accounts.commissions.index') }}" class="{{ request()->routeIs('admin.accounts.commissions.*') ? 'active' : '' }}">Sales Commissions</a>
+                    @endcan
+                    @can('accounts.payment-accounts.manage')
+                    <a href="{{ route('admin.accounts.wallets.index') }}" class="{{ request()->routeIs('admin.accounts.wallets.*') ? 'active' : '' }}">Wallets</a>
                     @endcan
                     @canany(['accounts.expenses.view-own', 'accounts.expenses.view-all'])
                     <a href="{{ route('admin.accounts.expenses.index') }}" class="{{ request()->routeIs('admin.accounts.expenses.*') ? 'active' : '' }}">Expenses</a>
@@ -121,7 +141,7 @@
                     @endcan
                 </div>
             </div>
-            @endcan
+            @endcanany
 
             @can('hr.dashboard.view')
             <div class="nav-group" data-group="hr">
@@ -299,6 +319,12 @@
                 <h1>@yield('title', 'Admin')</h1>
             </div>
             <div class="topbar-actions">
+                <a href="{{ route('admin.notifications.index') }}" class="notif-bell" title="Notifications">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0a3 3 0 11-6 0"/></svg>
+                    @if(($adminNotificationCount ?? 0) > 0)
+                        <span class="notif-count">{{ $adminNotificationCount > 9 ? '9+' : $adminNotificationCount }}</span>
+                    @endif
+                </a>
                 <a href="{{ $frontendUrl }}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">
                     <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                     View Website
@@ -314,6 +340,7 @@
             @if(session('error'))
                 <div class="alert alert-error">{{ session('error') }}</div>
             @endif
+            @include('admin.partials.errors')
             @yield('content')
         </main>
     </div>

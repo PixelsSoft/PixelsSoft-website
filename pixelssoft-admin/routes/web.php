@@ -46,6 +46,10 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::post('/media', [MediaAdminController::class, 'store'])->name('media.store');
     Route::delete('/media/{media}', [MediaAdminController::class, 'destroy'])->name('media.destroy');
 
+    Route::get('/notifications', [\App\Http\Controllers\Admin\NotificationAdminController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/read-all', [\App\Http\Controllers\Admin\NotificationAdminController::class, 'readAll'])->name('notifications.read-all');
+    Route::get('/notifications/{notification}', [\App\Http\Controllers\Admin\NotificationAdminController::class, 'read'])->name('notifications.read');
+
     require __DIR__.'/admin/system.php';
     require __DIR__.'/admin/crm.php';
     require __DIR__.'/admin/pm.php';

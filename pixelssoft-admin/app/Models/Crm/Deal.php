@@ -12,8 +12,9 @@ class Deal extends Model
     protected $table = 'crm_deals';
 
     protected $fillable = [
-        'title', 'company_id', 'contact_id', 'lead_id', 'pipeline_id', 'stage_id',
-        'value', 'currency', 'expected_close', 'owner_id', 'won_at', 'lost_reason', 'notes',
+        'title', 'company_id', 'contact_id', 'lead_id', 'source_id', 'pipeline_id', 'stage_id',
+        'value', 'currency', 'expected_close', 'owner_id', 'sales_person_id',
+        'won_at', 'lost_reason', 'notes', 'portal_contract_id', 'portal_url',
     ];
 
     protected function casts(): array
@@ -53,6 +54,16 @@ class Deal extends Model
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id');
+    }
+
+    public function salesperson(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'sales_person_id');
+    }
+
+    public function acquisitionSource(): BelongsTo
+    {
+        return $this->belongsTo(AcquisitionSource::class, 'source_id');
     }
 
     public function project()

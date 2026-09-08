@@ -44,6 +44,16 @@ Changes made in admin (blogs, portfolio, showcase, services, settings) appear on
 - Tawk.to chat settings
 - Google Services hub (Analytics, GTM, AdSense, Search Console, reCAPTCHA, Maps, Google Ads)
 - Auto-generates `ads.txt` when AdSense publisher ID is saved
+- Agency finance: lead sources (Upwork / Freelancer.com / Direct), wallets (Wise, Payoneer, Pakistani bank, Stripe), milestone release with platform + sales commission, ledger
+
+After pulling this update, run:
+
+```bash
+cd pixelssoft-admin
+php artisan migrate --seed
+```
+
+That adds default sources and wallets. Adjust portal % under **CRM → Lead Sources**. Release money from the project page; it posts into **Accounts → Ledger**, **Payments**, and **Sales Commissions**.
 
 ## Production
 

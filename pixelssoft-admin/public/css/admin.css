@@ -1075,3 +1075,153 @@ tr:hover td { background: #fafbfc; }
 .badge.score-hot { background: #fef2f2; color: #dc2626; }
 .badge.score-warm { background: #fffbeb; color: #d97706; }
 .badge.score-cold { background: #eff6ff; color: #2563eb; }
+
+.page-help {
+    padding: 0 24px 16px;
+    color: var(--text-muted);
+    font-size: 14px;
+}
+.page-help p { margin: 0 0 6px; }
+.page-help p:last-child { margin-bottom: 0; }
+.form-meta { margin: 12px 0 0; color: var(--text-muted); font-size: 13px; }
+
+.compact-table input,
+.compact-table select {
+    width: 100%;
+    min-width: 0;
+    padding: 7px 10px;
+    font-size: 13px;
+}
+.compact-table th.num,
+.compact-table td.num { width: 130px; }
+.compact-table .table-actions { display: flex; gap: 6px; justify-content: flex-end; white-space: nowrap; }
+
+.source-add-bar {
+    margin: 0 24px 20px;
+    padding: 16px;
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+.source-add-title { font-weight: 600; margin-bottom: 10px; font-size: 14px; }
+.source-add-fields {
+    display: grid;
+    grid-template-columns: 1.4fr 1.1fr 0.8fr 0.8fr auto;
+    gap: 8px;
+    align-items: center;
+}
+.source-add-fields input,
+.source-add-fields select { padding: 8px 10px; }
+.source-add-hint { margin: 8px 0 0; font-size: 12px; color: var(--text-muted); }
+
+.nested-row { background: #f8fafc; }
+.settle-form-lead { margin: 0 0 12px; font-size: 13px; color: var(--text-muted); }
+.settlement-block { padding: 0 24px 24px; border-bottom: 1px solid var(--border); }
+.settlement-block:last-child { border-bottom: none; }
+.settlement-block-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+    padding-top: 20px;
+}
+.settlement-amounts { display: flex; flex-wrap: wrap; gap: 12px; font-size: 13px; color: var(--text-muted); }
+.settlement-split {
+    max-width: 520px;
+    margin: 0 0 14px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #f8fafc;
+}
+.settlement-split-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: 13px;
+    color: var(--text-muted);
+    padding: 4px 0;
+}
+.settlement-split-fee strong { color: #b45309; }
+.settlement-split-net {
+    margin-top: 4px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--border);
+    color: var(--text);
+    font-size: 14px;
+}
+.settlement-split-net strong { color: #047857; }
+.settle-amount-hint { display: block; margin-top: 6px; font-size: 12px; color: var(--text-muted); }
+
+.notif-bell {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    background: #fff;
+}
+.notif-bell:hover { border-color: var(--accent); color: var(--accent-dark); }
+.notif-count {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 99px;
+    background: #ef4444;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.row-unread td { background: #eff6ff; }
+
+.invoice-sheet { display: flex; flex-direction: column; gap: 16px; }
+.invoice-sheet .card { margin-bottom: 0; }
+.invoice-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.invoice-kicker {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+.invoice-hero-main h2 { margin: 0 0 10px; }
+.invoice-hero-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.invoice-meta {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px 20px;
+}
+.invoice-meta-label {
+    display: block;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+.invoice-url { word-break: break-all; }
+.line-deduction, .line-deduction td { color: #b91c1c; }
+
+@media (max-width: 900px) {
+    .invoice-meta { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 900px) {
+    .source-add-fields { grid-template-columns: 1fr 1fr; }
+}
+

@@ -55,6 +55,12 @@
                 <div class="meta-row"><span class="meta-label">Project</span> {{ $invoice->project->name }}</div>
             @endif
             <div class="meta-row"><span class="meta-label">Currency</span> {{ $invoice->currency }}</div>
+            @if($invoice->sourceName())
+                <div class="meta-row"><span class="meta-label">Source</span> {{ $invoice->sourceName() }}</div>
+            @endif
+            @if($invoice->portalUrl())
+                <div class="meta-row"><span class="meta-label">Job URL</span> {{ $invoice->portalUrl() }}</div>
+            @endif
         </div>
     </div>
 
@@ -80,9 +86,9 @@
     </table>
 
     <table class="totals">
-        <tr><td>Subtotal</td><td class="text-right">{{ $invoice->currency }} {{ number_format($invoice->subtotal, 2) }}</td></tr>
-        <tr><td>Tax</td><td class="text-right">{{ $invoice->currency }} {{ number_format($invoice->tax, 2) }}</td></tr>
-        <tr class="total-row"><td>Total Due</td><td class="text-right">{{ $invoice->currency }} {{ number_format($invoice->total, 2) }}</td></tr>
+        <tr><td>Client amount</td><td class="text-right">{{ $invoice->currency }} {{ number_format($invoice->clientAmount(), 2) }}</td></tr>
+        <tr><td>Fees</td><td class="text-right">{{ $invoice->currency }} {{ number_format($invoice->displayedFees(), 2) }}</td></tr>
+        <tr class="total-row"><td>{{ $invoice->isClosed() ? 'Received' : 'Total due' }}</td><td class="text-right">{{ $invoice->currency }} {{ number_format($invoice->isClosed() ? ($invoice->clientAmount() - $invoice->displayedFees()) : $invoice->total, 2) }}</td></tr>
     </table>
 
     @if($invoice->notes)

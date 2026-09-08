@@ -5,6 +5,9 @@
 @section('content')
 <div class="card">
     <div class="card-header"><h2>{{ $project->exists ? 'Edit Project' : 'Create Project' }}</h2></div>
+    <div class="page-help">
+        <p>Delivery only: name, dates, manager, and tasks. Sales adds and releases milestones under <strong>Sales / CRM → Milestones</strong>.</p>
+    </div>
     <form method="POST" action="{{ $project->exists ? route('admin.pm.projects.update', $project) : route('admin.pm.projects.store') }}">
         @csrf
         @if($project->exists) @method('PUT') @endif
@@ -13,22 +16,6 @@
             @if($project->exists)
                 <div class="form-group"><label>Code</label><input type="text" value="{{ $project->code }}" disabled></div>
             @endif
-            <div class="form-group">
-                <label>Company</label>
-                <select name="company_id"><option value="">— None —</option>
-                    @foreach($companies as $company)
-                        <option value="{{ $company->id }}" @selected(old('company_id', $project->company_id) == $company->id)>{{ $company->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Deal</label>
-                <select name="deal_id"><option value="">— None —</option>
-                    @foreach($deals as $deal)
-                        <option value="{{ $deal->id }}" @selected(old('deal_id', $project->deal_id) == $deal->id)>{{ $deal->title }}</option>
-                    @endforeach
-                </select>
-            </div>
             <div class="form-group">
                 <label>Status *</label>
                 <select name="status" required>
@@ -48,9 +35,8 @@
             <div class="form-group"><label>Start Date</label><input type="date" name="start_date" value="{{ old('start_date', $project->start_date?->format('Y-m-d')) }}"></div>
             <div class="form-group"><label>Due Date</label><input type="date" name="due_date" value="{{ old('due_date', $project->due_date?->format('Y-m-d')) }}"></div>
             <div class="form-group"><label>Budget Hours</label><input type="number" step="0.25" min="0" name="budget_hours" value="{{ old('budget_hours', $project->budget_hours) }}"></div>
-            <div class="form-group"><label>Budget Amount</label><input type="number" step="0.01" min="0" name="budget_amount" value="{{ old('budget_amount', $project->budget_amount) }}"></div>
             <div class="form-group">
-                <label>Manager</label>
+                <label>Project Manager</label>
                 <select name="manager_id"><option value="">— Unassigned —</option>
                     @foreach($users as $user)
                         <option value="{{ $user->id }}" @selected(old('manager_id', $project->manager_id) == $user->id)>{{ $user->name }}</option>

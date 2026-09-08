@@ -31,7 +31,9 @@
     @can('pm.time.view-own')
         <a href="{{ route('admin.pm.time.create') }}" class="quick-action"><div class="qa-icon">⏱</div><div><strong>Log Time</strong></div></a>
     @endcan
+    @can('pm.projects.view')
     <a href="{{ route('admin.pm.projects.index') }}" class="quick-action"><div class="qa-icon">▦</div><div><strong>All Projects</strong></div></a>
+    @endcan
 </div>
 
 <div class="card">

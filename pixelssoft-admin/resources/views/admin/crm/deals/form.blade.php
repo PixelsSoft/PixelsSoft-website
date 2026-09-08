@@ -28,6 +28,19 @@
             </div>
             <div class="form-group"><label>Value</label><input type="number" step="0.01" name="value" value="{{ old('value', $deal->value ?? 0) }}"></div>
             <div class="form-group">
+                <label>Currency</label>
+                <input type="text" name="currency" maxlength="3" value="{{ old('currency', $deal->currency ?? 'USD') }}">
+            </div>
+            <div class="form-group">
+                <label>Source</label>
+                <select name="source_id">
+                    <option value="">— Select —</option>
+                    @foreach($sources as $source)
+                        <option value="{{ $source->id }}" @selected(old('source_id', $deal->source_id) == $source->id)>{{ $source->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="form-group">
                 <label>Company</label>
                 <select name="company_id"><option value="">— None —</option>
                     @foreach($companies as $company)
@@ -37,13 +50,12 @@
             </div>
             <div class="form-group">
                 <label>Owner</label>
-                <select name="owner_id"><option value="">— Unassigned —</option>
-                    @foreach($users as $user)
-                        <option value="{{ $user->id }}" @selected(old('owner_id', $deal->owner_id) == $user->id)>{{ $user->name }}</option>
-                    @endforeach
-                </select>
+                <input type="text" value="{{ $deal->exists ? ($deal->owner?->name ?? '—') : auth()->user()->name }}" disabled>
+                <span class="settle-amount-hint">Owner is the person who created the lead. Commission stays with them.</span>
             </div>
             <div class="form-group"><label>Expected Close</label><input type="date" name="expected_close" value="{{ old('expected_close', $deal->expected_close?->format('Y-m-d')) }}"></div>
+            <div class="form-group"><label>Portal / job URL</label><input type="url" name="portal_url" value="{{ old('portal_url', $deal->portal_url) }}" placeholder="https://www.upwork.com/…"></div>
+            <div class="form-group"><label>Portal contract ID</label><input type="text" name="portal_contract_id" value="{{ old('portal_contract_id', $deal->portal_contract_id) }}"></div>
         </div>
         <div class="form-group" style="margin-top:16px"><label>Notes</label><textarea name="notes" rows="3">{{ old('notes', $deal->notes) }}</textarea></div>
         <div class="form-actions">

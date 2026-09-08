@@ -13,9 +13,17 @@ class Lead extends Model
     protected $table = 'crm_leads';
 
     protected $fillable = [
-        'company_id', 'contact_id', 'title', 'source', 'status', 'score',
-        'owner_id', 'notes', 'contact_message_id',
+        'company_id', 'contact_id', 'title', 'source', 'source_id', 'status', 'score',
+        'budget', 'currency', 'owner_id', 'notes', 'contact_message_id',
+        'portal_contract_id', 'portal_url',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'budget' => 'decimal:2',
+        ];
+    }
 
     public function company(): BelongsTo
     {
@@ -30,6 +38,11 @@ class Lead extends Model
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id');
+    }
+
+    public function acquisitionSource(): BelongsTo
+    {
+        return $this->belongsTo(AcquisitionSource::class, 'source_id');
     }
 
     public function deals(): HasMany

@@ -3,9 +3,8 @@
 namespace App\Http\Controllers\Admin\Pm;
 
 use App\Http\Controllers\Controller;
-use App\Models\Crm\Company;
-use App\Models\Crm\Deal;
 use App\Models\Pm\Project;
+use App\Models\Pm\ProjectMember;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -33,7 +32,7 @@ class ProjectAdminController extends Controller
 
     public function create()
     {
-        return view('admin.pm.projects.form', $this->formData(new Project()));
+        return view('admin.pm.projects.form', $this->formData(new Project(['status' => 'planning', 'priority' => 'medium'])));
     }
 
     public function store(Request $request)
@@ -47,9 +46,15 @@ class ProjectAdminController extends Controller
 
     public function show(Project $project)
     {
-        $project->load(['company', 'deal', 'manager', 'tasks.assignee', 'milestones', 'timeEntries']);
+        $project->load([
+            'company', 'manager', 'tasks.assignee', 'members.user',
+        ]);
 
-        return view('admin.pm.projects.show', compact('project'));
+        return view('admin.pm.projects.show', [
+            'project' => $project,
+            'users' => User::where('status', 'active')->orderBy('name')->get(),
+            'memberRoles' => ['developer', 'qa', 'production', 'sales', 'manager'],
+        ]);
     }
 
     public function edit(Project $project)
@@ -61,7 +66,7 @@ class ProjectAdminController extends Controller
     {
         $project->update($this->validated($request));
 
-        return redirect()->route('admin.pm.projects.index')->with('success', 'Project updated.');
+        return redirect()->route('admin.pm.projects.show', $project)->with('success', 'Project updated.');
     }
 
     public function destroy(Project $project)
@@ -71,12 +76,33 @@ class ProjectAdminController extends Controller
         return redirect()->route('admin.pm.projects.index')->with('success', 'Project deleted.');
     }
 
+    public function addMember(Request $request, Project $project)
+    {
+        $data = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'role' => 'required|in:developer,qa,production,sales,manager',
+        ]);
+
+        ProjectMember::firstOrCreate([
+            'project_id' => $project->id,
+            'user_id' => $data['user_id'],
+            'role' => $data['role'],
+        ]);
+
+        return back()->with('success', 'Team member added.');
+    }
+
+    public function removeMember(Project $project, ProjectMember $member)
+    {
+        $member->delete();
+
+        return back()->with('success', 'Team member removed.');
+    }
+
     private function formData(Project $project): array
     {
         return [
             'project' => $project,
-            'companies' => Company::orderBy('name')->get(),
-            'deals' => Deal::orderByDesc('created_at')->take(50)->get(),
             'users' => User::where('status', 'active')->orderBy('name')->get(),
         ];
     }
@@ -85,14 +111,11 @@ class ProjectAdminController extends Controller
     {
         return $request->validate([
             'name' => 'required|string|max:255',
-            'company_id' => 'nullable|exists:crm_companies,id',
-            'deal_id' => 'nullable|exists:crm_deals,id',
             'status' => 'required|in:planning,active,on_hold,completed,archived',
             'priority' => 'required|in:low,medium,high,urgent',
             'start_date' => 'nullable|date',
             'due_date' => 'nullable|date',
             'budget_hours' => 'nullable|numeric|min:0',
-            'budget_amount' => 'nullable|numeric|min:0',
             'manager_id' => 'nullable|exists:users,id',
             'description' => 'nullable|string',
         ]);

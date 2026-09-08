@@ -1,11 +1,13 @@
 <?php
 
 use App\Http\Controllers\Admin\Crm\ActivityAdminController;
+use App\Http\Controllers\Admin\Crm\AcquisitionSourceAdminController;
 use App\Http\Controllers\Admin\Crm\CompanyAdminController;
 use App\Http\Controllers\Admin\Crm\ContactAdminController;
 use App\Http\Controllers\Admin\Crm\CrmDashboardController;
 use App\Http\Controllers\Admin\Crm\CrmReportController;
 use App\Http\Controllers\Admin\Crm\DealAdminController;
+use App\Http\Controllers\Admin\Crm\DealMilestoneController;
 use App\Http\Controllers\Admin\Crm\LeadAdminController;
 use Illuminate\Support\Facades\Route;
 
@@ -28,16 +30,24 @@ Route::prefix('crm')->name('crm.')->group(function () {
     Route::middleware('permission:crm.deals.view')->group(function () {
         Route::get('/deals', [DealAdminController::class, 'index'])->name('deals.index');
         Route::get('/deals/kanban', [DealAdminController::class, 'kanban'])->name('deals.kanban');
+        Route::get('/milestones', [DealAdminController::class, 'milestones'])->name('milestones.index');
     });
     Route::middleware('permission:crm.deals.create')->group(function () {
         Route::get('/deals/create', [DealAdminController::class, 'create'])->name('deals.create');
         Route::post('/deals', [DealAdminController::class, 'store'])->name('deals.store');
     });
+    Route::middleware('permission:crm.deals.view')->get('/deals/{deal}', [DealAdminController::class, 'show'])->name('deals.show');
     Route::middleware('permission:crm.deals.edit')->group(function () {
         Route::get('/deals/{deal}/edit', [DealAdminController::class, 'edit'])->name('deals.edit');
         Route::put('/deals/{deal}', [DealAdminController::class, 'update'])->name('deals.update');
         Route::patch('/deals/{deal}/stage', [DealAdminController::class, 'moveStage'])->name('deals.move-stage');
     });
+    Route::middleware('permission:pm.milestones.manage')->group(function () {
+        Route::post('/deals/{deal}/milestones', [DealMilestoneController::class, 'store'])->name('deals.milestones.store');
+        Route::put('/deals/{deal}/milestones/{milestone}', [DealMilestoneController::class, 'update'])->name('deals.milestones.update');
+        Route::delete('/deals/{deal}/milestones/{milestone}', [DealMilestoneController::class, 'destroy'])->name('deals.milestones.destroy');
+    });
+    Route::middleware('permission:pm.milestones.release')->post('/deals/{deal}/milestones/{milestone}/release', [DealMilestoneController::class, 'release'])->name('deals.milestones.release');
     Route::middleware('permission:crm.deals.delete')->delete('/deals/{deal}', [DealAdminController::class, 'destroy'])->name('deals.destroy');
 
     Route::middleware('permission:crm.companies.view')->get('/companies', [CompanyAdminController::class, 'index'])->name('companies.index');
@@ -68,4 +78,11 @@ Route::prefix('crm')->name('crm.')->group(function () {
     Route::middleware('permission:crm.activities.delete')->delete('/activities/{activity}', [ActivityAdminController::class, 'destroy'])->name('activities.destroy');
 
     Route::middleware('permission:crm.reports.view')->get('/reports', [CrmReportController::class, 'index'])->name('reports.index');
+
+    Route::middleware('permission:crm.sources.manage')->group(function () {
+        Route::get('/sources', [AcquisitionSourceAdminController::class, 'index'])->name('sources.index');
+        Route::post('/sources', [AcquisitionSourceAdminController::class, 'store'])->name('sources.store');
+        Route::put('/sources/{source}', [AcquisitionSourceAdminController::class, 'update'])->name('sources.update');
+        Route::delete('/sources/{source}', [AcquisitionSourceAdminController::class, 'destroy'])->name('sources.destroy');
+    });
 });

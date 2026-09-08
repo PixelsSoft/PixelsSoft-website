@@ -8,26 +8,38 @@ use Illuminate\Support\Facades\Auth;
 
 trait ScopesByOwner
 {
+    protected function currentUserSeesAllOwners(): bool
+    {
+        return Auth::user()?->hasRole('super-admin') === true;
+    }
+
     protected function scopeForCurrentUser(Builder|Relation $query, string $ownerColumn = 'owner_id'): Builder|Relation
     {
         $user = Auth::user();
 
+        if (!$user || $this->currentUserSeesAllOwners()) {
+            return $query;
+        }
+
+        return $query->where($ownerColumn, $user->id);
+    }
+
+    protected function authorizeOwnedRecord(?int $ownerId, ?int $alsoUserId = null): void
+    {
+        $user = Auth::user();
+
         if (!$user) {
-            return $query;
+            abort(403);
         }
 
-        if ($user->hasRole('super-admin') || $user->can('crm.reports.view')) {
-            return $query;
+        if ($this->currentUserSeesAllOwners()) {
+            return;
         }
 
-        if ($user->hasAnyRole(['sales-manager', 'project-manager', 'finance', 'hr-admin'])) {
-            return $query;
-        }
+        $allowed = array_filter([(int) $ownerId, (int) $alsoUserId]);
 
-        if ($user->hasRole('sales-rep')) {
-            return $query->where($ownerColumn, $user->id);
+        if (!in_array((int) $user->id, $allowed, true)) {
+            abort(403);
         }
-
-        return $query;
     }
 }

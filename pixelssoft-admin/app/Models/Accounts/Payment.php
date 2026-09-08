@@ -9,7 +9,10 @@ class Payment extends Model
 {
     protected $table = 'acc_payments';
 
-    protected $fillable = ['invoice_id', 'amount', 'method', 'reference', 'paid_at'];
+    protected $fillable = [
+        'invoice_id', 'payment_account_id', 'project_id', 'milestone_id',
+        'amount', 'currency', 'method', 'reference', 'paid_at',
+    ];
 
     protected function casts(): array
     {
@@ -22,5 +25,20 @@ class Payment extends Model
     public function invoice(): BelongsTo
     {
         return $this->belongsTo(Invoice::class, 'invoice_id');
+    }
+
+    public function paymentAccount(): BelongsTo
+    {
+        return $this->belongsTo(PaymentAccount::class, 'payment_account_id');
+    }
+
+    public function project(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Pm\Project::class, 'project_id');
+    }
+
+    public function milestone(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Pm\Milestone::class, 'milestone_id');
     }
 }

@@ -40,18 +40,27 @@ class Permissions
             'crm.contacts.view', 'crm.contacts.create', 'crm.contacts.edit', 'crm.contacts.delete',
             'crm.activities.view', 'crm.activities.create', 'crm.activities.edit', 'crm.activities.delete',
             'crm.reports.view',
+            'crm.sources.manage',
             // PM
             'pm.dashboard.view',
             'pm.projects.view', 'pm.projects.create', 'pm.projects.edit', 'pm.projects.delete',
             'pm.tasks.view', 'pm.tasks.create', 'pm.tasks.edit', 'pm.tasks.delete',
             'pm.time.view-own', 'pm.time.view-all', 'pm.time.approve',
             'pm.reports.view',
+            'pm.milestones.manage',
+            'pm.milestones.release',
+            'pm.finance.view',
+            'pm.members.manage',
             // Accounts
             'accounts.dashboard.view',
             'accounts.invoices.view', 'accounts.invoices.create', 'accounts.invoices.edit', 'accounts.invoices.delete',
             'accounts.payments.view', 'accounts.payments.create',
             'accounts.expenses.view-own', 'accounts.expenses.view-all', 'accounts.expenses.create', 'accounts.expenses.approve',
             'accounts.reports.view',
+            'accounts.ledger.view',
+            'accounts.commissions.view', 'accounts.commissions.pay',
+            'accounts.payment-accounts.manage',
+            'accounts.settlements.manage',
             // HR
             'hr.dashboard.view',
             'hr.employees.view', 'hr.employees.create', 'hr.employees.edit', 'hr.employees.delete',
@@ -71,7 +80,12 @@ class Permissions
             'content-editor' => array_filter($all, fn ($p) => str_starts_with($p, 'cms.')),
             'sales-manager' => array_merge(
                 array_filter($all, fn ($p) => str_starts_with($p, 'crm.')),
-                ['pm.projects.view', 'pm.dashboard.view', 'accounts.invoices.view', 'accounts.dashboard.view']
+                [
+                    'pm.dashboard.view',
+                    'pm.projects.view', 'pm.projects.create', 'pm.projects.edit',
+                    'pm.milestones.manage', 'pm.milestones.release', 'pm.finance.view',
+                    'accounts.commissions.view',
+                ]
             ),
             'sales-rep' => [
                 'crm.dashboard.view', 'crm.leads.view', 'crm.leads.create', 'crm.leads.edit', 'crm.leads.convert',
@@ -79,15 +93,31 @@ class Permissions
                 'crm.companies.view', 'crm.companies.create', 'crm.companies.edit',
                 'crm.contacts.view', 'crm.contacts.create', 'crm.contacts.edit',
                 'crm.activities.view', 'crm.activities.create', 'crm.activities.edit',
+                'pm.dashboard.view',
+                'pm.projects.view', 'pm.projects.create', 'pm.projects.edit',
+                'pm.milestones.manage', 'pm.milestones.release', 'pm.finance.view',
             ],
             'project-manager' => array_merge(
-                array_filter($all, fn ($p) => str_starts_with($p, 'pm.')),
-                ['crm.deals.view', 'crm.companies.view', 'accounts.invoices.create', 'accounts.invoices.view']
+                array_filter($all, function ($p) {
+                    if (!str_starts_with($p, 'pm.')) {
+                        return false;
+                    }
+
+                    return !in_array($p, [
+                        'pm.finance.view',
+                        'pm.milestones.release',
+                        'pm.milestones.manage',
+                    ], true);
+                }),
+                ['crm.deals.view', 'crm.companies.view']
             ),
-            'finance' => array_filter($all, fn ($p) => str_starts_with($p, 'accounts.')),
+            'finance' => array_merge(
+                array_filter($all, fn ($p) => str_starts_with($p, 'accounts.')),
+                ['pm.projects.view', 'pm.finance.view']
+            ),
             'hr-admin' => array_filter($all, fn ($p) => str_starts_with($p, 'hr.') || str_starts_with($p, 'system.users.view')),
             'employee' => [
-                'pm.dashboard.view', 'pm.tasks.view', 'pm.time.view-own',
+                'pm.dashboard.view', 'pm.projects.view', 'pm.tasks.view', 'pm.time.view-own',
                 'hr.leave.view-own', 'hr.leave.request', 'hr.attendance.view',
                 'accounts.expenses.view-own', 'accounts.expenses.create',
             ],

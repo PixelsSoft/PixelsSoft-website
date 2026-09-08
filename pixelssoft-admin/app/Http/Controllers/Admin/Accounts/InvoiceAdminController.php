@@ -53,7 +53,16 @@ class InvoiceAdminController extends Controller
 
     public function show(Invoice $invoice)
     {
-        $invoice->load(['company', 'project', 'items', 'payments']);
+        $invoice->load([
+            'company',
+            'project.source',
+            'project.deal.lead.acquisitionSource',
+            'project.deal.acquisitionSource',
+            'deal.lead.acquisitionSource',
+            'deal.acquisitionSource',
+            'items',
+            'payments.paymentAccount',
+        ]);
 
         return view('admin.accounts.invoices.show', compact('invoice'));
     }
@@ -107,7 +116,7 @@ class InvoiceAdminController extends Controller
 
     public function pdf(Invoice $invoice)
     {
-        $invoice->load(['company', 'project', 'items', 'payments']);
+        $invoice->load(['company', 'project.source', 'deal.lead', 'deal.acquisitionSource', 'items', 'payments.paymentAccount']);
 
         return Pdf::loadView('admin.accounts.invoices.pdf', compact('invoice'))
             ->download($invoice->number . '.pdf');

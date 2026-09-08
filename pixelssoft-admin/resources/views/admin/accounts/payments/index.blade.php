@@ -29,11 +29,11 @@
 
     <div class="table-wrap">
         <table>
-            <thead><tr><th>Date</th><th>Invoice</th><th>Company</th><th>Amount</th><th>Method</th><th>Reference</th><th>Actions</th></tr></thead>
+            <thead><tr><th>Date</th><th>Invoice</th><th>Milestone</th><th>Project</th><th>Wallet</th><th>Amount</th><th>Method</th><th>Reference</th><th>Actions</th></tr></thead>
             <tbody>
                 @forelse($payments as $payment)
                     <tr>
-                        <td>{{ $payment->paid_at->format('M d, Y') }}</td>
+                        <td>{{ $payment->paid_at->format('M d, Y H:i') }}</td>
                         <td>
                             @can('accounts.invoices.view')
                                 <a href="{{ route('admin.accounts.invoices.show', $payment->invoice) }}">{{ $payment->invoice?->number ?? '—' }}</a>
@@ -41,8 +41,26 @@
                                 {{ $payment->invoice?->number ?? '—' }}
                             @endcan
                         </td>
-                        <td>{{ $payment->invoice?->company?->name ?? '—' }}</td>
-                        <td>{{ $payment->invoice?->currency ?? 'USD' }} {{ number_format($payment->amount, 2) }}</td>
+                        <td>{{ $payment->milestone?->title ?? '—' }}</td>
+                        <td>
+                            @if($payment->project)
+                                <a href="{{ route('admin.pm.projects.show', $payment->project) }}">{{ $payment->project->code }}</a>
+                            @else
+                                —
+                            @endif
+                        </td>
+                        <td>
+                            @if($payment->paymentAccount)
+                                @can('accounts.ledger.view')
+                                    <a href="{{ route('admin.accounts.ledger.show', $payment->paymentAccount) }}">{{ $payment->paymentAccount->name }}</a>
+                                @else
+                                    {{ $payment->paymentAccount->name }}
+                                @endcan
+                            @else
+                                —
+                            @endif
+                        </td>
+                        <td>{{ $payment->currency ?: ($payment->invoice?->currency ?? 'USD') }} {{ number_format($payment->amount, 2) }}</td>
                         <td>{{ str_replace('_', ' ', $payment->method) }}</td>
                         <td>{{ $payment->reference ?? '—' }}</td>
                         <td class="table-actions">
@@ -54,7 +72,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="7" class="empty-state">No payments yet.</td></tr>
+                    <tr><td colspan="9" class="empty-state">No payments yet.</td></tr>
                 @endforelse
             </tbody>
         </table>

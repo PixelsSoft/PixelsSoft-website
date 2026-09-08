@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Admin\Pm\MilestoneAdminController;
 use App\Http\Controllers\Admin\Pm\PmDashboardController;
 use App\Http\Controllers\Admin\Pm\PmReportController;
 use App\Http\Controllers\Admin\Pm\ProjectAdminController;
@@ -44,10 +43,9 @@ Route::prefix('pm')->name('pm.')->group(function () {
     Route::middleware('permission:pm.time.approve')->patch('/time/{timeEntry}/approve', [TimeEntryAdminController::class, 'approve'])->name('time.approve');
     Route::middleware('permission:pm.time.view-own')->delete('/time/{timeEntry}', [TimeEntryAdminController::class, 'destroy'])->name('time.destroy');
 
-    Route::middleware('permission:pm.projects.edit')->group(function () {
-        Route::post('/projects/{project}/milestones', [MilestoneAdminController::class, 'store'])->name('projects.milestones.store');
-        Route::put('/projects/{project}/milestones/{milestone}', [MilestoneAdminController::class, 'update'])->name('projects.milestones.update');
-        Route::delete('/projects/{project}/milestones/{milestone}', [MilestoneAdminController::class, 'destroy'])->name('projects.milestones.destroy');
+    Route::middleware('permission:pm.members.manage')->group(function () {
+        Route::post('/projects/{project}/members', [ProjectAdminController::class, 'addMember'])->name('projects.members.store');
+        Route::delete('/projects/{project}/members/{member}', [ProjectAdminController::class, 'removeMember'])->name('projects.members.destroy');
     });
 
     Route::middleware('permission:pm.reports.view')->get('/reports', [PmReportController::class, 'index'])->name('reports.index');

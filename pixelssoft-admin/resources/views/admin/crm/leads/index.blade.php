@@ -40,13 +40,14 @@
 
     <div class="table-wrap">
         <table>
-            <thead><tr><th>Title</th><th>Company</th><th>Contact</th><th>Status</th><th>Score</th><th>Owner</th><th>Actions</th></tr></thead>
+            <thead><tr><th>Title</th><th>Company</th><th>Source</th><th>Budget</th><th>Status</th><th>Score</th><th>Owner</th><th>Actions</th></tr></thead>
             <tbody>
                 @forelse($leads as $lead)
                     <tr>
                         <td><a href="{{ route('admin.crm.leads.show', $lead) }}"><strong>{{ $lead->title }}</strong></a></td>
                         <td>{{ $lead->company?->name ?? '—' }}</td>
-                        <td>{{ $lead->contact?->name ?? '—' }}</td>
+                        <td>{{ $lead->acquisitionSource?->name ?? $lead->source ?? '—' }}</td>
+                        <td>{{ $lead->currency ?: 'USD' }} {{ number_format((float) $lead->budget, 2) }}</td>
                         <td><span class="badge badge-draft">{{ $lead->status }}</span></td>
                         <td><span class="badge score-{{ $lead->score }}">{{ $lead->score }}</span></td>
                         <td>{{ $lead->owner?->name ?? '—' }}</td>
@@ -72,7 +73,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="7" class="empty-state">No leads yet.</td></tr>
+                    <tr><td colspan="8" class="empty-state">No leads yet.</td></tr>
                 @endforelse
             </tbody>
         </table>

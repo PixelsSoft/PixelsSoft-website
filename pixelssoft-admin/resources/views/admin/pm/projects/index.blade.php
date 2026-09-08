@@ -31,7 +31,7 @@
 
     <div class="table-wrap">
         <table>
-            <thead><tr><th>Name</th><th>Code</th><th>Company</th><th>Status</th><th>Priority</th><th>Tasks</th><th>Manager</th><th>Actions</th></tr></thead>
+            <thead><tr><th>Name</th><th>Code</th><th>Company</th><th>Status</th><th>Manager</th><th>Actions</th></tr></thead>
             <tbody>
                 @forelse($projects as $project)
                     <tr>
@@ -39,8 +39,6 @@
                         <td>{{ $project->code }}</td>
                         <td>{{ $project->company?->name ?? '—' }}</td>
                         <td><span class="badge badge-draft">{{ str_replace('_', ' ', $project->status) }}</span></td>
-                        <td>{{ $project->priority }}</td>
-                        <td>{{ $project->tasks_count }}</td>
                         <td>{{ $project->manager?->name ?? '—' }}</td>
                         <td class="table-actions">
                             <a href="{{ route('admin.pm.projects.show', $project) }}" class="btn btn-sm btn-outline">View</a>
@@ -59,7 +57,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="8" class="empty-state">No projects yet.</td></tr>
+                    <tr><td colspan="6" class="empty-state">No projects yet.</td></tr>
                 @endforelse
             </tbody>
         </table>

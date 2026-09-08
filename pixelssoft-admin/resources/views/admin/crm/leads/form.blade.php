@@ -3,6 +3,11 @@
 @section('title', $lead->exists ? 'Edit Lead' : 'New Lead')
 
 @section('content')
+@php
+    $ownerName = $lead->exists
+        ? ($lead->owner?->name ?? '—')
+        : auth()->user()->name;
+@endphp
 <div class="card">
     <div class="card-header"><h2>{{ $lead->exists ? 'Edit Lead' : 'Create Lead' }}</h2></div>
     <form method="POST" action="{{ $lead->exists ? route('admin.crm.leads.update', $lead) : route('admin.crm.leads.store') }}">
@@ -19,12 +24,12 @@
                 </select>
             </div>
             <div class="form-group">
-                <label>Contact</label>
-                <select name="contact_id"><option value="">— None —</option>
-                    @foreach($contacts as $contact)
-                        <option value="{{ $contact->id }}" @selected(old('contact_id', $lead->contact_id) == $contact->id)>{{ $contact->name }}</option>
-                    @endforeach
-                </select>
+                <label>Budget *</label>
+                <input type="number" step="0.01" min="0" name="budget" value="{{ old('budget', $lead->budget) }}" required>
+            </div>
+            <div class="form-group">
+                <label>Currency</label>
+                <input type="text" name="currency" maxlength="3" value="{{ old('currency', $lead->currency ?? 'USD') }}">
             </div>
             <div class="form-group">
                 <label>Status *</label>
@@ -44,16 +49,20 @@
             </div>
             <div class="form-group">
                 <label>Source</label>
-                <input type="text" name="source" value="{{ old('source', $lead->source) }}" placeholder="website, referral, etc.">
-            </div>
-            <div class="form-group">
-                <label>Owner</label>
-                <select name="owner_id"><option value="">— Unassigned —</option>
-                    @foreach($users as $user)
-                        <option value="{{ $user->id }}" @selected(old('owner_id', $lead->owner_id) == $user->id)>{{ $user->name }}</option>
+                <select name="source_id">
+                    <option value="">— Select —</option>
+                    @foreach($sources as $source)
+                        <option value="{{ $source->id }}" @selected(old('source_id', $lead->source_id) == $source->id)>{{ $source->name }}</option>
                     @endforeach
                 </select>
             </div>
+            <div class="form-group">
+                <label>Owner</label>
+                <input type="text" value="{{ $ownerName }}" disabled>
+                <span class="settle-amount-hint">Assigned to whoever creates the lead. Sales commission follows this person.</span>
+            </div>
+            <div class="form-group"><label>Portal / job URL</label><input type="url" name="portal_url" value="{{ old('portal_url', $lead->portal_url) }}" placeholder="https://www.freelancer.com/projects/…"></div>
+            <div class="form-group"><label>Portal contract ID</label><input type="text" name="portal_contract_id" value="{{ old('portal_contract_id', $lead->portal_contract_id) }}"></div>
         </div>
         <div class="form-group" style="margin-top:16px"><label>Notes</label><textarea name="notes" rows="4">{{ old('notes', $lead->notes) }}</textarea></div>
         <div class="form-actions">

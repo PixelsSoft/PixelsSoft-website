@@ -24,10 +24,14 @@
                     <div class="kanban-cards" data-stage-id="{{ $stage->id }}">
                         @foreach($stage->deals as $deal)
                             <div class="kanban-card" draggable="true" data-deal-id="{{ $deal->id }}">
-                                <strong>{{ $deal->title }}</strong>
+                                <strong><a href="{{ route('admin.crm.deals.show', $deal) }}">{{ $deal->title }}</a></strong>
                                 @if($deal->company)<small>{{ $deal->company->name }}</small>@endif
+                                @if($deal->acquisitionSource)<small>{{ $deal->acquisitionSource->name }}</small>@endif
                                 <div class="kanban-card-meta">
                                     <span>${{ number_format($deal->value, 0) }}</span>
+                                    @if($deal->project || $deal->won_at)
+                                        <a href="{{ route('admin.crm.deals.show', $deal) }}">Milestones</a>
+                                    @endif
                                     @can('crm.deals.edit')
                                         <a href="{{ route('admin.crm.deals.edit', $deal) }}">Edit</a>
                                     @endcan

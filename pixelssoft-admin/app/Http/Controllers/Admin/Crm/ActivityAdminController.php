@@ -6,10 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\Crm\Activity;
 use App\Models\Crm\Deal;
 use App\Models\Crm\Lead;
+use App\Support\ScopesByOwner;
 use Illuminate\Http\Request;
 
 class ActivityAdminController extends Controller
 {
+    use ScopesByOwner;
+
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -24,6 +27,11 @@ class ActivityAdminController extends Controller
         $model = $data['related_type'] === 'lead'
             ? Lead::findOrFail($data['related_id'])
             : Deal::findOrFail($data['related_id']);
+
+        $this->authorizeOwnedRecord(
+            $model->owner_id,
+            $model instanceof Deal ? $model->sales_person_id : null
+        );
 
         $model->activities()->create([
             'type' => $data['type'],
