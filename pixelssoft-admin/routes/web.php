@@ -61,4 +61,5 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     require __DIR__.'/admin/pm.php';
     require __DIR__.'/admin/accounts.php';
     require __DIR__.'/admin/hr.php';
+    require __DIR__.'/admin/freelancer.php';
 });

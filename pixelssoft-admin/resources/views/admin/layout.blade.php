@@ -176,6 +176,55 @@
             </div>
             @endcan
 
+            @canany(['freelancer.dashboard.view', 'freelancer.projects.view', 'freelancer.account.manage', 'freelancer.automation.manage'])
+            <div class="nav-group" data-group="freelancer">
+                <button type="button" class="nav-group-toggle" aria-expanded="false">
+                    <span>Freelancer</span>
+                    <svg class="nav-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div class="nav-group-body">
+                    @can('freelancer.dashboard.view')
+                    <a href="{{ route('admin.freelancer.dashboard') }}" class="{{ request()->routeIs('admin.freelancer.dashboard') ? 'active' : '' }}">Dashboard</a>
+                    @endcan
+                    @can('freelancer.projects.view')
+                    <a href="{{ route('admin.freelancer.projects.index') }}" class="{{ request()->routeIs('admin.freelancer.projects.index', 'admin.freelancer.projects.show') ? 'active' : '' }}">Projects</a>
+                    <a href="{{ route('admin.freelancer.projects.qualified') }}" class="{{ request()->routeIs('admin.freelancer.projects.qualified') ? 'active' : '' }}">Qualified Projects</a>
+                    @endcan
+                    @can('freelancer.bids.view')
+                    <a href="{{ route('admin.freelancer.bids.index') }}" class="{{ request()->routeIs('admin.freelancer.bids.*') ? 'active' : '' }}">Bids</a>
+                    @endcan
+                    @can('freelancer.automation.manage')
+                    <a href="{{ route('admin.freelancer.automation.index') }}" class="{{ request()->routeIs('admin.freelancer.automation.*') ? 'active' : '' }}">Automation</a>
+                    @endcan
+                    @can('freelancer.strategies.manage')
+                    <a href="{{ route('admin.freelancer.strategies.index') }}" class="{{ request()->routeIs('admin.freelancer.strategies.*') ? 'active' : '' }}">Strategies</a>
+                    @endcan
+                    @can('freelancer.templates.manage')
+                    <a href="{{ route('admin.freelancer.templates.index') }}" class="{{ request()->routeIs('admin.freelancer.templates.*') ? 'active' : '' }}">Bid Templates</a>
+                    @endcan
+                    @can('freelancer.skills.manage')
+                    <a href="{{ route('admin.freelancer.skills.index') }}" class="{{ request()->routeIs('admin.freelancer.skills.*') ? 'active' : '' }}">Skills</a>
+                    @endcan
+                    @can('freelancer.portfolio.manage')
+                    <a href="{{ route('admin.freelancer.portfolio.index') }}" class="{{ request()->routeIs('admin.freelancer.portfolio.*') ? 'active' : '' }}">Portfolio</a>
+                    <a href="{{ route('admin.freelancer.portfolio-links.index') }}" class="{{ request()->routeIs('admin.freelancer.portfolio-links.*') ? 'active' : '' }}">Portfolio Links</a>
+                    @endcan
+                    @can('freelancer.analytics.view')
+                    <a href="{{ route('admin.freelancer.analytics.index') }}" class="{{ request()->routeIs('admin.freelancer.analytics.*') ? 'active' : '' }}">Analytics</a>
+                    @endcan
+                    @can('freelancer.account.manage')
+                    <a href="{{ route('admin.freelancer.account.index') }}" class="{{ request()->routeIs('admin.freelancer.account.*') ? 'active' : '' }}">Account</a>
+                    @endcan
+                    @can('freelancer.logs.view')
+                    <a href="{{ route('admin.freelancer.logs.index') }}" class="{{ request()->routeIs('admin.freelancer.logs.*') ? 'active' : '' }}">API Logs</a>
+                    @endcan
+                    @can('freelancer.settings.manage')
+                    <a href="{{ route('admin.freelancer.settings.index') }}" class="{{ request()->routeIs('admin.freelancer.settings.*') ? 'active' : '' }}">Settings</a>
+                    @endcan
+                </div>
+            </div>
+            @endcanany
+
             @canany(['cms.blogs.view', 'cms.portfolios.view', 'cms.showcases.view', 'cms.services.view', 'cms.sections.view', 'cms.media.view'])
             <div class="nav-group" data-group="content">
                 <button type="button" class="nav-group-toggle" aria-expanded="false">

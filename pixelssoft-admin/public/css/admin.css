@@ -819,6 +819,236 @@ tfoot td {
 
 .checkbox-label input { width: auto; }
 
+.form-control,
+.admin-form input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+.admin-form select,
+.admin-form textarea,
+.settings-form input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+.settings-form select,
+.settings-form textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    line-height: 1.45;
+    color: var(--text);
+    background: #fff;
+    transition: border-color .15s, box-shadow .15s;
+}
+
+.form-control:focus,
+.admin-form input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):focus,
+.admin-form select:focus,
+.admin-form textarea:focus,
+.settings-form input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):focus,
+.settings-form select:focus,
+.settings-form textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.form-control::placeholder,
+.admin-form input::placeholder,
+.admin-form textarea::placeholder,
+.settings-form input::placeholder,
+.settings-form textarea::placeholder {
+    color: #9ca3af;
+}
+
+.form-control[type="number"] {
+    max-width: none;
+}
+
+.admin-form textarea,
+.settings-form textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+.admin-form textarea.textarea-sm,
+.settings-form textarea.textarea-sm {
+    min-height: 72px;
+}
+
+.admin-form select[multiple],
+.settings-form select[multiple] {
+    min-height: 180px;
+    padding: 8px;
+}
+
+.admin-form select[multiple].select-sm,
+.settings-form select[multiple].select-sm {
+    min-height: 140px;
+}
+
+.admin-form,
+.settings-form {
+    display: grid;
+    gap: 1rem;
+    max-width: 760px;
+}
+
+.admin-form-wide,
+.settings-form-wide { max-width: 900px; }
+
+.admin-form-medium,
+.settings-form-medium { max-width: 820px; }
+
+.admin-form-narrow,
+.settings-form-narrow { max-width: 520px; }
+
+.admin-form > label:not(.form-check),
+.admin-form .form-field,
+.settings-form > label:not(.form-check),
+.settings-form .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text);
+}
+
+.admin-form .form-row,
+.settings-form .form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.admin-form .form-split,
+.settings-form .form-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.admin-form .form-row > label,
+.settings-form .form-row > label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text);
+}
+
+.admin-form .form-check,
+.settings-form .form-check {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.admin-form .form-check input[type="checkbox"],
+.settings-form .form-check input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    accent-color: var(--accent-dark);
+    flex-shrink: 0;
+}
+
+.admin-form .form-check-grid,
+.settings-form .form-check-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: .75rem 1rem;
+}
+
+.admin-form .schedule-day,
+.settings-form .schedule-day {
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #fafbfc;
+    display: grid;
+    gap: .75rem;
+}
+
+.admin-form .form-actions,
+.settings-form .form-actions {
+    display: flex;
+    gap: .75rem;
+    flex-wrap: wrap;
+    align-items: center;
+    padding-top: .5rem;
+}
+
+.admin-form .form-actions .btn,
+.admin-form > .btn,
+.admin-form > button.btn,
+.settings-form .form-actions .btn,
+.settings-form > .btn,
+.settings-form > button.btn {
+    width: auto;
+    min-width: 120px;
+    justify-self: start;
+}
+
+.search-toolbar {
+    margin-bottom: 1rem;
+    max-width: 360px;
+}
+
+.search-toolbar .form-control {
+    width: 100%;
+}
+
+.inline-table-form {
+    display: grid;
+    gap: .75rem;
+    padding: .75rem 0;
+}
+
+.table-row-form {
+    display: flex;
+    gap: .75rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.table-row-form .form-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    margin: 0;
+}
+
+.table-row-form .form-control.input-sm {
+    width: 88px;
+    min-width: 88px;
+    padding: 8px 10px;
+}
+
+.table-row-form > label:not(.form-check) {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.card .card-body {
+    padding: 1rem;
+}
+
+@media (max-width: 768px) {
+    .admin-form .form-split,
+    .settings-form .form-split {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* Service sections in Google settings */
 .service-block {
     padding: 20px;

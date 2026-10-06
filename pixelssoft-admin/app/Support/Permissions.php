@@ -69,6 +69,19 @@ class Permissions
             'hr.attendance.view', 'hr.attendance.manage',
             'hr.payroll.view', 'hr.payroll.process',
             'hr.documents.view', 'hr.documents.manage',
+            // Freelancer automation
+            'freelancer.dashboard.view',
+            'freelancer.projects.view', 'freelancer.projects.manage',
+            'freelancer.bids.view', 'freelancer.bids.manage',
+            'freelancer.automation.manage',
+            'freelancer.strategies.manage',
+            'freelancer.templates.manage',
+            'freelancer.skills.manage',
+            'freelancer.portfolio.manage',
+            'freelancer.analytics.view',
+            'freelancer.account.manage',
+            'freelancer.logs.view',
+            'freelancer.settings.manage',
         ];
     }
 
@@ -80,7 +93,7 @@ class Permissions
             'super-admin' => $all,
             'content-editor' => array_filter($all, fn ($p) => str_starts_with($p, 'cms.')),
             'sales-manager' => array_merge(
-                array_filter($all, fn ($p) => str_starts_with($p, 'crm.')),
+                array_filter($all, fn ($p) => str_starts_with($p, 'crm.') || str_starts_with($p, 'freelancer.')),
                 [
                     'pm.dashboard.view',
                     'pm.projects.view', 'pm.projects.create', 'pm.projects.edit',

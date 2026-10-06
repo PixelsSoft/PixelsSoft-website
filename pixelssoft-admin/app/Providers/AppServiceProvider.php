@@ -6,6 +6,12 @@ use App\Models\Accounts\PaymentAccount;
 use App\Models\Accounts\SalesCommission;
 use App\Models\ContactMessage;
 use App\Models\Crm\AcquisitionSource;
+use App\Models\Freelancer\FreelancerBid;
+use App\Models\Freelancer\FreelancerBidTemplate;
+use App\Models\Freelancer\FreelancerPortfolio;
+use App\Models\Freelancer\FreelancerProject;
+use App\Models\Freelancer\FreelancerSkill;
+use App\Models\Freelancer\FreelancerStrategy;
 use App\Models\Pm\Milestone;
 use App\Models\Pm\ProjectMember;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -35,6 +41,24 @@ class AppServiceProvider extends ServiceProvider
         Route::bind('member', fn ($value) => ProjectMember::findOrFail($value));
         Route::bind('milestone', fn ($value) => Milestone::findOrFail($value));
         Route::bind('stripePayment', fn ($value) => \App\Models\Accounts\StripePayment::findOrFail($value));
+        Route::bind('project', function ($value, $route) {
+            if (str_starts_with((string) $route->getName(), 'admin.freelancer.')) {
+                return FreelancerProject::findOrFail($value);
+            }
+
+            return \App\Models\Pm\Project::findOrFail($value);
+        });
+        Route::bind('bid', fn ($value) => FreelancerBid::findOrFail($value));
+        Route::bind('strategy', fn ($value) => FreelancerStrategy::findOrFail($value));
+        Route::bind('template', fn ($value) => FreelancerBidTemplate::findOrFail($value));
+        Route::bind('skill', fn ($value) => FreelancerSkill::findOrFail($value));
+        Route::bind('portfolio', function ($value, $route) {
+            if (str_starts_with((string) $route->getName(), 'admin.freelancer.')) {
+                return FreelancerPortfolio::findOrFail($value);
+            }
+
+            return \App\Models\Portfolio::findOrFail($value);
+        });
 
         Paginator::defaultView('vendor.pagination.admin');
 
